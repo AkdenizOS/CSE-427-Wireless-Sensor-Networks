@@ -6,6 +6,8 @@
 
 ## Reading
 - Slides: add when shared on Teams
+- [Dargie & Poellabauer — Ch. 12 (sensor network programming)](../resources/books/dargie-poellabauer-fundamentals-of-wireless-sensor-networks.pdf#page=305)
+- [Karl & Willig — Ch. 14 (advanced application support)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=440)
 
 ## Lab
 - Cooja lab: add when shared

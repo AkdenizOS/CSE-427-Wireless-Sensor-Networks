@@ -6,6 +6,8 @@
 
 ## Reading
 - Slides: add when shared on Teams
+- [Karl & Willig — Ch. 8 (time synchronization)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=228)
+- [Dargie & Poellabauer — Ch. 9 (time synchronization)](../resources/books/dargie-poellabauer-fundamentals-of-wireless-sensor-networks.pdf#page=249)
 
 ## Lab
 - Cooja lab: add when shared

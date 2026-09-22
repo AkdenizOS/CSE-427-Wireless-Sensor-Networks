@@ -6,6 +6,7 @@
 
 ## Reading
 - Slides: add when shared on Teams
+- [Karl & Willig — Ch. 7 (naming and addressing)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=208)
 
 ## Lab
 - Cooja lab: add when shared

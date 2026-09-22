@@ -6,6 +6,8 @@
 
 ## Reading
 - Slides: add when shared on Teams
+- [Karl & Willig — Ch. 2.2 (energy consumption of sensor nodes)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=63)
+- [Dargie & Poellabauer — Ch. 8 (power management)](../resources/books/dargie-poellabauer-fundamentals-of-wireless-sensor-networks.pdf#page=227)
 
 ## Lab
 - Cooja lab: add when shared

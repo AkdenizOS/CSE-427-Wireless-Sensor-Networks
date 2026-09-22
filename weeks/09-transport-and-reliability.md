@@ -6,6 +6,8 @@
 
 ## Reading
 - Slides: add when shared on Teams
+- [Karl & Willig — Ch. 13.1 (transport layer and QoS)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=386)
+- [Karl & Willig — Ch. 13.3-13.5 (reliable data transport)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=403)
 
 ## Lab
 - Cooja lab: add when shared

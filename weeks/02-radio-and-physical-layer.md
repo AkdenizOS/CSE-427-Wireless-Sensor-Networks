@@ -10,6 +10,9 @@
 
 ## Reading
 - Slides: add when shared on Teams
+- [Karl & Willig — Ch. 4.2 (wireless channel fundamentals)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=113)
+- [Karl & Willig — Ch. 4.3 (physical layer and transceiver design)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=130)
+- [Dargie & Poellabauer — Ch. 5 (physical layer)](../resources/books/dargie-poellabauer-fundamentals-of-wireless-sensor-networks.pdf#page=115)
 
 ## Lab
 - Cooja lab: add when shared

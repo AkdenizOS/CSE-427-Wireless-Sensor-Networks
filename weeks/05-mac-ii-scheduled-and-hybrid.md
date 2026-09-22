@@ -6,6 +6,9 @@
 
 ## Reading
 - Slides: add when shared on Teams
+- [Karl & Willig — Ch. 5.4 (schedule-based protocols)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=160)
+- [Karl & Willig — Ch. 5.5 (IEEE 802.15.4 MAC)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=166)
+- [Dargie & Poellabauer — Ch. 6 (medium access control)](../resources/books/dargie-poellabauer-fundamentals-of-wireless-sensor-networks.pdf#page=145)
 
 ## Lab
 - Cooja lab: add when shared

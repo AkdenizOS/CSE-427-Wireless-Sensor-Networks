@@ -6,6 +6,8 @@
 
 ## Reading
 - Slides: add when shared on Teams
+- [Karl & Willig — Ch. 12 (data-centric networking)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=358)
+- [Karl & Willig — Ch. 12.3 (data aggregation)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=368)
 
 ## Lab
 - Cooja lab: add when shared

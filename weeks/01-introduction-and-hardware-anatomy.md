@@ -32,6 +32,12 @@ a video submission, and this week's attendance and lab count as bonus points.
 
 ## Reading
 - [Week 1 slides — Introduction & Hardware Anatomy](../resources/2026-2027-fall/Week_1_WSN_Introduction_Hardware_Anatomy.pptm) (includes the course syllabus)
+- [Karl & Willig — Ch. 1 (introduction)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=28)
+- [Karl & Willig — Ch. 2.1 (hardware components)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=45)
+- [Dargie & Poellabauer — Ch. 1 (motivation)](../resources/books/dargie-poellabauer-fundamentals-of-wireless-sensor-networks.pdf#page=23)
+- [Dargie & Poellabauer — Ch. 2 (applications)](../resources/books/dargie-poellabauer-fundamentals-of-wireless-sensor-networks.pdf#page=37)
+- [Dargie & Poellabauer — Ch. 3 (node architecture)](../resources/books/dargie-poellabauer-fundamentals-of-wireless-sensor-networks.pdf#page=67)
+- [Dargie & Poellabauer — Ch. 4 (operating systems)](../resources/books/dargie-poellabauer-fundamentals-of-wireless-sensor-networks.pdf#page=89)
 - [An Introduction to COOJA](https://github.com/contiki-os/contiki/wiki/An-Introduction-to-COOJA)
 - [Contiki wiki](https://github.com/contiki-os/contiki/wiki) · [Contiki OS GitHub](https://github.com/contiki-os/contiki) · [examples](https://github.com/contiki-os/contiki/tree/master/examples)
 

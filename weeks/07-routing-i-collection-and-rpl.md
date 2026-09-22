@@ -6,6 +6,8 @@
 
 ## Reading
 - Slides: add when shared on Teams
+- [Karl & Willig — Ch. 11.1-11.3 (forwarding, routing, energy-efficient unicast)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=316)
+- [Dargie & Poellabauer — Ch. 7 (network layer)](../resources/books/dargie-poellabauer-fundamentals-of-wireless-sensor-networks.pdf#page=183)
 
 ## Lab
 - Cooja lab: add when shared

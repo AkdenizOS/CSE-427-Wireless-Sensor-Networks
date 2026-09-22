@@ -64,10 +64,10 @@ Details in [course-info.md](course-info.md#lab-environment).
 
 ```
 README.md        This page
-course-info.md   Syllabus, lab environment, glossary
+course-info.md   Syllabus, textbooks, lab environment, glossary
 weeks/NN-*.md    One file per week: the shared plan on top, everyone's notes below
 exams/           Midterm and final: papers, patterns, preparation
-resources/       Slides and handouts; resources/<term>/ for what the instructor issued that term
+resources/       books/ (two WSN textbooks); resources/<term>/ for slides and handouts the instructor issued that term
 ```
 
 ## Taking notes

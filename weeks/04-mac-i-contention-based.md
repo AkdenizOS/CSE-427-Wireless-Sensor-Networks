@@ -6,6 +6,10 @@
 
 ## Reading
 - Slides: add when shared on Teams
+- [Karl & Willig — Ch. 5.1 (MAC fundamentals)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=139)
+- [Karl & Willig — Ch. 5.2 (low duty cycle and wakeup)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=147)
+- [Karl & Willig — Ch. 5.3 (contention-based protocols)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=156)
+- [Dargie & Poellabauer — Ch. 6 (medium access control)](../resources/books/dargie-poellabauer-fundamentals-of-wireless-sensor-networks.pdf#page=145)
 
 ## Lab
 - Cooja lab: add when shared

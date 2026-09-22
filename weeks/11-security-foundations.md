@@ -8,6 +8,7 @@ The instructor aims to complete at least weeks 1-10 as planned; weeks 11-14 may 
 
 ## Reading
 - Slides: add when shared on Teams
+- [Dargie & Poellabauer — Ch. 11 (security)](../resources/books/dargie-poellabauer-fundamentals-of-wireless-sensor-networks.pdf#page=287)
 
 ## Lab
 - Cooja lab: add when shared

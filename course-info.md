@@ -32,6 +32,19 @@ Later weeks connect protocols to reliability, security, data, and reproducible e
 | 13 | Data Processing & Edge Intelligence | Aggregation, compression, anomaly detection, edge decisions |
 | 14 | Integration & Project Demo | Experiment design, reproducibility, final review, student demos |
 
+## Textbooks
+
+The instructor has not assigned a textbook. These two cover the syllabus; every week
+file links the matching chapters at the exact page.
+
+| File | Book | Use |
+|------|------|-----|
+| [`karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf`](resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf) | Karl & Willig, *Protocols and Architectures for Wireless Sensor Networks* (Wiley, 2005) | Closest to the syllabus order: hardware, physical layer, MAC, addressing, time sync, topology control, routing, transport |
+| [`dargie-poellabauer-fundamentals-of-wireless-sensor-networks.pdf`](resources/books/dargie-poellabauer-fundamentals-of-wireless-sensor-networks.pdf) | Dargie & Poellabauer, *Fundamentals of Wireless Sensor Networks: Theory and Practice* (Wiley, 2010) | Newer; adds power management, security and programming chapters |
+
+Neither book covers the post-2010 IETF stack (6LoWPAN, RPL, TSCH/6TiSCH, CoAP) in depth —
+use the slides for those.
+
 ## Lab environment
 
 - **Instant Contiki 3.0** virtual machine in **VMware** — a frozen Linux environment with

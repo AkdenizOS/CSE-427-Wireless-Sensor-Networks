@@ -6,6 +6,9 @@
 
 ## Reading
 - Slides: add when shared on Teams
+- [Karl & Willig — Ch. 10 (topology control)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=278)
+- [Karl & Willig — Ch. 11.5 (geographic routing)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=343)
+- [Karl & Willig — Ch. 11.6 (mobile nodes)](../resources/books/karl-willig-protocols-and-architectures-for-wireless-sensor-networks.pdf#page=355)
 
 ## Lab
 - Cooja lab: add when shared
