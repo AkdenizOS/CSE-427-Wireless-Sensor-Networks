@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CSE 427 — Practice Midterm — Answer Key</title>
+<style>
+  :root {
+    --wm-a: rgba(0,99,170,0.09);    /* AkdenizOS sea blue #0063AA */
+    --wm-b: rgba(244,117,36,0.12);  /* AkdenizOS orange  #F47524 */
+    --notice: #b00;
+    --sol-bar: #1a5;
+    --sol-bg: #f4fbf6;
+  }
+  @page {
+    size: A4;
+    margin: 16mm 16mm 18mm 16mm;
+    @bottom-center { content: "CSE 427 Practice Midterm — Answer Key · Page " counter(page) " of " counter(pages); font: 9pt "Times New Roman", serif; color: #555; }
+  }
+  * { box-sizing: border-box; }
+  body { font: 10.5pt/1.4 "Times New Roman", Times, serif; color: #000; margin: 0; }
+  .watermark { position: fixed; top: 42%; left: -20%; right: -20%; white-space: nowrap; text-align: center; font: bold 54pt Arial, sans-serif; transform: rotate(-30deg); z-index: 1000; pointer-events: none; letter-spacing: 4px; }
+  .watermark .wa { color: var(--wm-a); }
+  .watermark .wb { color: var(--wm-b); }
+  header { border-bottom: 2px solid #000; padding-bottom: 6px; text-align: center; }
+  header .u { font-size: 13pt; font-weight: bold; }
+  header .c { font-size: 12pt; font-weight: bold; margin-top: 2px; }
+  header .k { font: bold 11pt Arial, sans-serif; color: var(--notice); margin-top: 4px; letter-spacing: 1px; }
+  .notice { margin: 8px 0; padding: 5px 8px; border: 1.5px dashed var(--notice); color: var(--notice); font: bold 9.5pt Arial, sans-serif; text-align: center; }
+  h2 { font-size: 12pt; margin: 14px 0 4px; border-bottom: 1px solid #000; padding-bottom: 2px; display: flex; justify-content: space-between; break-after: avoid; }
+  h2 .pts { font-weight: normal; font-style: italic; }
+  p { margin: 3px 0; }
+  /* Parts and solution boxes may split across pages — forcing them whole leaves half-empty pages. */
+  .part { margin: 8px 0 2px; }
+  .part > b:first-child { display: inline-block; width: 24px; }
+  .sol { margin: 2px 0 4px 24px; padding: 4px 8px; border-left: 3px solid var(--sol-bar); background: var(--sol-bg); }
+  .sol .final { font-weight: bold; }
+  .math { font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif; white-space: nowrap; }
+  .stack { margin: 2px 0 2px 20px; font-family: "Cambria Math", "Times New Roman", serif; line-height: 1.45; border-collapse: collapse; }
+  .stack td { padding: 0 6px; }
+  /* Worked tables (tableaux, DP tables, traces). Tables alone stay unbroken. */
+  table.tab { border-collapse: collapse; margin: 4px 0 6px; font-size: 10pt; break-inside: avoid; }
+  .tab th, .tab td { border: 1px solid #000; padding: 1px 8px; text-align: center; }
+  .tab th { background: #eee; }
+  .tab tr.z td { border-top: 2px solid #000; background: #f7f7f7; }     /* summary/objective row */
+  .tab td.pv { font-weight: bold; outline: 2px solid #b00; outline-offset: -3px; } /* highlighted cell */
+  .tab td.rhs { border-left: 2px solid #000; }                          /* separator column */
+  .cap { font-size: 9.5pt; font-style: italic; margin-top: 6px; }
+  .note { font-size: 9.5pt; color: #333; font-style: italic; }
+  pre.code { font: 9.5pt/1.35 "JetBrains Mono", Menlo, monospace; background: #fff; border: 1px solid #ccc; padding: 6px 8px; margin: 4px 0; }
+  .pb { break-before: page; }
+</style>
+</head>
+<body>
+<div class="watermark"><span class="wa">AKDENIZ</span><span class="wb">OS.ORG</span></div>
+<header>
+  <div class="u">Akdeniz University · Department of Computer Engineering</div>
+  <div class="c">CSE 427 — Wireless Sensor Networks · Midterm Examination (Practice)</div>
+  <div class="k">ANSWER KEY</div>
+</header>
+<div class="notice">PRACTICE PAPER — not issued by the instructor. Numbers checked with a script; marking scheme is a suggestion.</div>
+<h2><span>Question 1 — WSN Fundamentals and Application Taxonomy</span><span class="pts">14 points</span></h2>
+<div class="part"><b>(a)</b> Definitions <span class="note">(4 pts: 1 each definition, 1 each reason)</span>
+  <div class="sol">
+    <p><b>Mote:</b> a small embedded sensor node — sensor(s), MCU, radio, memory, power supply — that senses, processes and communicates wirelessly.</p>
+    <p><b>Sink / gateway:</b> the collection point that gathers the network's data and bridges it to users or other networks (Internet, database, dashboard).</p>
+    <p>Not "small Wi-Fi": (1) nodes are battery powered with tiny memory/CPU, so energy dominates every design choice; (2) traffic is small, periodic or event-driven measurement data over lossy multi-hop links, attached to a physical environment — it is measurement infrastructure, not general-purpose connectivity.</p>
+  </div>
+</div>
+
+<div class="part"><b>(b)</b> Classification <span class="note">(6 pts: 0.5 per class, 1 per requirement with reason)</span>
+  <div class="sol">
+    <table class="tab">
+      <tr><th>#</th><th>Pattern</th><th>Main need</th><th>Reason</th></tr>
+      <tr><td>M1</td><td>Periodic</td><td>None critical</td><td style="text-align:left">A missing sample is tolerable; the next one comes in a minute</td></tr>
+      <tr><td>M2</td><td>Event-driven</td><td>Low latency + reliability</td><td style="text-align:left">Plants are damaged if the alarm is late or lost</td></tr>
+      <tr><td>M3</td><td>Query-driven</td><td>None critical</td><td style="text-align:left">Operator can simply ask again</td></tr>
+      <tr><td>M4</td><td>Control</td><td>Authentication + reliability</td><td style="text-align:left">A wrong or forged command changes the physical world</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="part"><b>(c)</b> Control and security <span class="note">(4 pts: 2 explanation, 2 attack)</span>
+  <div class="sol">
+    <p>Monitoring only observes: bad data is annoying. Actuation changes physical state: an incorrect or forged command can cause damage, so authentication, integrity and safe defaults become requirements.</p>
+    <p class="final">Example attacks on M4: an attacker injects or replays an "open vents" command (spoofing / replay), or jams the channel so the command never arrives.</p>
+  </div>
+</div>
+
+<h2><span>Question 2 — Mote Hardware and Contiki</span><span class="pts">14 points</span></h2>
+<div class="part"><b>(a)</b> Block diagram <span class="note">(5 pts: 0.5 per block, 1.5 flow + dominant blocks)</span>
+  <div class="sol">
+    <p class="math">Sensors → ADC → MCU → Radio → Antenna, with Memory attached to the MCU and the Power subsystem feeding all blocks.</p>
+    <p class="final">Lifetime is dominated by the radio and the power subsystem.</p>
+  </div>
+</div>
+
+<div class="part"><b>(b)</b> Contiki process <span class="note">(5 pts: 1 period, 1 window, 1.5 static, 1.5 busy-wait)</span>
+  <div class="sol">
+    <p class="final">"sample" is printed every 5 seconds, visible in Cooja's Mote Output window.</p>
+    <p><b>static:</b> protothreads do not keep a stack across <i>PROCESS_WAIT_EVENT_UNTIL</i>; a local (automatic) variable would lose its value while the process is suspended.</p>
+    <p><b>No busy wait:</b> the process yields; the MCU can enter a low-power mode until the timer event arrives. A busy loop keeps the CPU active (wasting energy) and blocks the other processes in the cooperative scheduler.</p>
+  </div>
+</div>
+
+<div class="part"><b>(c)</b> Sky vs Cooja mote <span class="note">(4 pts)</span>
+  <div class="sol">
+    <p><b>Sky mote:</b> emulates the real MSP430 hardware and CC2420 radio and runs the compiled firmware — closer to hardware timing, memory limits and energy; slower.</p>
+    <p><b>Cooja mote:</b> the Contiki code compiled natively and run at software level — much faster, but not hardware-faithful (no real memory/timing constraints).</p>
+    <p class="note">Choose Sky for labs that measure timing/energy or must match hardware (the course default); Cooja motes for quick logic tests or large networks.</p>
+  </div>
+</div>
+
+<h2><span>Question 3 — Radio and Physical Layer</span><span class="pts">18 points</span></h2>
+<div class="part"><b>(a)</b> Received power at 20 m <span class="note">(4 pts)</span>
+  <div class="sol">
+    <p class="math" style="margin-left:20px">PL(20) = 40 + 30 · log<sub>10</sub>(20) = 40 + 30 · 1.301 = 79.03 dB</p>
+    <p class="final">P<sub>r</sub> = 0 − 79.03 ≈ −79.0 dBm</p>
+  </div>
+</div>
+
+<div class="part"><b>(b)</b> Maximum range <span class="note">(5 pts)</span>
+  <div class="sol">
+    <p class="math" style="margin-left:20px">40 + 30 · log<sub>10</sub>(d) ≤ 94 ⇒ log<sub>10</sub>(d) ≤ 1.8</p>
+    <p class="final">d<sub>max</sub> = 10<sup>1.8</sup> ≈ 63.1 m</p>
+  </div>
+</div>
+
+<div class="part"><b>(c)</b> Shadowing <span class="note">(5 pts: 2 probability, 3 distance)</span>
+  <div class="sol">
+    <p>At d<sub>max</sub> the mean margin is 0 dB, so the link works iff X<sub>σ</sub> ≤ 0.</p>
+    <p class="final">P(link works at 63.1 m) = 0.5</p>
+    <p class="math" style="margin-left:20px">fade margin = z<sub>0.90</sub> · σ = 1.28 · 4 = 5.13 dB</p>
+    <p class="math" style="margin-left:20px">30 · log<sub>10</sub>(d) ≤ 94 − 40 − 5.13 = 48.87 ⇒ d = 10<sup>1.629</sup></p>
+    <p class="final">d<sub>0.90</sub> ≈ 42.6 m</p>
+  </div>
+</div>
+
+<div class="part"><b>(d)</b> RSSI / LQI / PRR <span class="note">(4 pts)</span>
+  <div class="sol">
+    <p><b>RSSI</b>: received signal strength (dBm) measured by the radio. <b>LQI</b>: the radio's link-quality indicator, based on the chip error rate of the received frame (802.15.4). <b>PRR</b>: fraction of sent packets that are received.</p>
+    <p>The <b>transitional region</b> is the distance band between reliable connectivity and no connectivity, where PRR varies widely and unpredictably because of fading, shadowing and noise. Links are <b>asymmetric</b> because nodes differ in transmit power, sensitivity, noise floor and local interference, so A may hear B while B barely hears A.</p>
+  </div>
+</div>
+
+<h2><span>Question 4 — Energy</span><span class="pts">20 points</span></h2>
+<div class="part"><b>(a)</b> Always listening <span class="note">(4 pts)</span>
+  <div class="sol">
+    <p class="math" style="margin-left:20px">T = 2500 mAh / 21.5 mA = 116.3 h</p>
+    <p class="final">≈ 116 h ≈ 4.8 days</p>
+  </div>
+</div>
+
+<div class="part"><b>(b)</b> Duty-cycled <span class="note">(8 pts: 2 per term, 2 lifetime)</span>
+  <div class="sol">
+    <p class="math" style="margin-left:20px">f<sub>RX</sub> = 0.01, f<sub>TX</sub> = 0.004 / 60 = 6.67·10<sup>−5</sup>, f<sub>sleep</sub> = 1 − f<sub>RX</sub> − f<sub>TX</sub> ≈ 0.98993</p>
+    <table class="tab">
+      <tr><th>State</th><th>Fraction</th><th>Current</th><th>Contribution</th></tr>
+      <tr><td>RX / listen</td><td>0.01</td><td>21.5 mA</td><td>0.2150 mA</td></tr>
+      <tr><td>TX</td><td>6.67·10<sup>−5</sup></td><td>19.2 mA</td><td>0.0013 mA</td></tr>
+      <tr><td>Sleep</td><td>0.98993</td><td>0.0051 mA</td><td>0.0050 mA</td></tr>
+      <tr class="z"><td>Average</td><td></td><td></td><td class="pv">0.2213 mA</td></tr>
+    </table>
+    <p class="math" style="margin-left:20px">T = 2500 / 0.2213 = 11 295 h</p>
+    <p class="final">≈ 471 days ≈ 1.29 years — about 97× longer than (a)</p>
+  </div>
+</div>
+
+<div class="part"><b>(c)</b> Dominant term <span class="note">(4 pts)</span>
+  <div class="sol">
+    <p class="final">Listening dominates: 0.215 of 0.221 mA ≈ 97 % of the average current.</p>
+    <p>Transmissions are negligible; the cost is idle listening. Optimization should reduce listening time — shorter/rarer wake-ups (RDC/MAC design, e.g. ContikiMAC), fewer rendezvous — rather than shrinking packets.</p>
+  </div>
+</div>
+
+<div class="part"><b>(d)</b> Energest <span class="note">(4 pts)</span>
+  <div class="sol">
+    <p>Energest counts how long (in timer ticks) each component spends in each state: CPU active, LPM, radio transmit, radio listen.</p>
+    <p class="math" style="margin-left:20px">E = Σ<sub>state</sub> (ticks<sub>state</sub> / ticks-per-second) · I<sub>state</sub> · V</p>
+    <p class="note">Currents come from the datasheet (e.g. CC2420, MSP430); V ≈ 3 V for two AA cells.</p>
+  </div>
+</div>
+
+<h2><span>Question 5 — Medium Access Control</span><span class="pts">20 points</span></h2>
+<div class="part"><b>(a)</b> Hidden / exposed terminal <span class="note">(6 pts: 3 each)</span>
+  <div class="sol">
+    <p><b>Hidden:</b> A and C both send to B. A and C cannot hear each other, so carrier sensing says "free" to both; their frames collide at B.</p>
+    <p><b>Exposed:</b> B sends to A while C wants to send to D. C hears B, senses the channel busy and defers — although its transmission to D would not disturb A. Capacity is wasted.</p>
+  </div>
+</div>
+
+<div class="part"><b>(b)</b> B-MAC vs X-MAC <span class="note">(6 pts: 2 B-MAC, 2 X-MAC, 2 overhearing)</span>
+  <div class="sol">
+    <p><b>B-MAC:</b> the preamble must be at least as long as the wake-up interval so the receiver surely sees it: the sender transmits for the full <b>500 ms</b> every time.</p>
+    <p><b>X-MAC:</b> the sender repeats short strobes carrying the destination address; the receiver answers with an early ACK as soon as it wakes. With a uniformly random wake-up time the expected wait is T<sub>w</sub>/2.</p>
+    <p class="final">B-MAC: 500 ms · X-MAC: 250 ms on average (500 ms worst case)</p>
+    <p>Overhearing: a non-target node that wakes up decodes one short strobe, sees it is not the destination and goes back to sleep, instead of listening to a whole long preamble.</p>
+  </div>
+</div>
+
+<div class="part"><b>(c)</b> TDMA graph coloring <span class="note">(5 pts: 3 assignment, 2 proof)</span>
+  <div class="sol">
+    <p>A, B, C form a triangle, so at least 3 slots are needed. A 3-slot assignment:</p>
+    <table class="tab">
+      <tr><th>Node</th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th></tr>
+      <tr><td>Slot</td><td>1</td><td>2</td><td>3</td><td>1</td><td>1</td><td>2</td></tr>
+    </table>
+    <p>Check: D is adjacent to B(2), C(3), F(2); E to C(3), F(2); F to D(1), E(1) — no conflict.</p>
+    <p class="final">Minimum = 3 slots</p>
+  </div>
+</div>
+
+<div class="part"><b>(d)</b> TSCH channel <span class="note">(3 pts: 2 channel, 1 reason)</span>
+  <div class="sol">
+    <p class="math" style="margin-left:20px">(1003 + 2) mod 4 = 1005 mod 4 = 1 ⇒ seq[1]</p>
+    <p class="final">Channel 20</p>
+    <p>Hopping gives frequency diversity: narrow-band interference and multipath fading on one channel only hit a fraction of transmissions.</p>
+  </div>
+</div>
+
+<h2><span>Question 6 — 6LoWPAN and RPL Routing</span><span class="pts">14 points</span></h2>
+<div class="part"><b>(a)</b> Why adaptation <span class="note">(4 pts)</span>
+  <div class="sol">
+    <p>An 802.15.4 frame carries at most 127 bytes (and much less after MAC headers), while IPv6 has a 40-byte header and requires links to carry 1280-byte packets.</p>
+    <p class="final">6LoWPAN uses header compression and fragmentation / reassembly.</p>
+  </div>
+</div>
+
+<div class="part"><b>(b)</b> Fragmentation <span class="note">(5 pts: 2 payload sizes, 3 count)</span>
+  <div class="sol">
+    <p class="math" style="margin-left:20px">first: 102 − 4 = 98 → round down to multiple of 8 → 96 bytes</p>
+    <p class="math" style="margin-left:20px">later: 102 − 5 = 97 → 96 bytes; remaining 400 − 96 = 304 = 3·96 + 16</p>
+    <p class="final">5 fragments carrying 96, 96, 96, 96, 16 bytes</p>
+  </div>
+</div>
+
+<div class="part"><b>(c)</b> RPL parent choice <span class="note">(5 pts: 2 choice, 1 hop count, 2 ETX reason)</span>
+  <div class="sol">
+    <p class="math" style="margin-left:20px">via A: 1.2 + 2.0 = 3.2 · via B: 2.5 + 1.0 = 3.5</p>
+    <p class="final">X chooses A; path ETX = 3.2</p>
+    <p>Hop count need not agree: B's path ETX of 1.0 suggests B is one hop from R, so hop count would prefer B (2 hops) over A.</p>
+    <p>ETX counts expected transmissions including retries, so it reflects real link quality and energy cost; hop count prefers long, lossy links that need many retransmissions.</p>
+  </div>
+</div>
+</body>
+</html>

@@ -12,6 +12,7 @@ No past papers yet. Add any you find here as `<year>-<type>.pdf`
 ## Midterm
 
 ### Preparation
+- [ ] [Practice midterm](practice-midterm/practice-midterm.pdf) (weeks 1-7, 90 min) — check with the [answer key](practice-midterm/practice-midterm-answers.pdf). Practice paper, not issued by the instructor; HTML sources next to the PDFs.
 - [ ] Week slides and the "Key concepts" of each week file
 
 ## Final

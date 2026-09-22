@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CSE 427 — Practice Midterm</title>
+<style>
+  /* ── Theme: edit these to rebrand. Watermark alphas are deliberately faint because
+        the watermark sits ON TOP of content (see .watermark). ── */
+  :root {
+    --wm-a: rgba(0,99,170,0.09);    /* watermark part A — AkdenizOS sea blue #0063AA */
+    --wm-b: rgba(244,117,36,0.12);  /* watermark part B — AkdenizOS orange  #F47524 */
+    --notice: #b00;
+  }
+  @page {
+    size: A4;
+    margin: 16mm 16mm 18mm 16mm;
+    @bottom-center { content: "CSE 427 Practice Midterm · Page " counter(page) " of " counter(pages); font: 9pt "Times New Roman", serif; color: #555; }
+  }
+  * { box-sizing: border-box; }
+  body { font: 11pt/1.4 "Times New Roman", Times, serif; color: #000; margin: 0; }
+
+  /* Watermark on top of content (z-index 1000) so shaded boxes/tables can't hide it.
+     Box is wider than the page and nowrap so long text isn't clipped when rotated. */
+  .watermark { position: fixed; top: 42%; left: -20%; right: -20%; white-space: nowrap; text-align: center; font: bold 54pt Arial, sans-serif; transform: rotate(-30deg); z-index: 1000; pointer-events: none; letter-spacing: 4px; }
+  .watermark .wa { color: var(--wm-a); }
+  .watermark .wb { color: var(--wm-b); }
+
+  header { border-bottom: 2px solid #000; padding-bottom: 6px; display: flex; align-items: center; gap: 14px; }
+  .seal { width: 58px; height: 58px; border: 2px solid #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font: bold 8pt Arial, sans-serif; text-align: center; line-height: 1.1; flex-shrink: 0; }
+  .inst { flex: 1; text-align: center; }
+  .inst .u { font-size: 14pt; font-weight: bold; letter-spacing: .5px; }
+  .inst .d { font-size: 10.5pt; }
+  .inst .c { font-size: 13pt; font-weight: bold; margin-top: 4px; }
+  .inst .e { font-size: 12pt; margin-top: 2px; }
+  .notice { margin: 8px 0; padding: 5px 8px; border: 1.5px dashed var(--notice); color: var(--notice); font: bold 9.5pt Arial, sans-serif; text-align: center; }
+
+  table { border-collapse: collapse; }
+  .info { width: 100%; margin-top: 8px; }
+  .info td { border: 1px solid #000; padding: 5px 8px; font-size: 10.5pt; height: 26px; }
+  .info td.l { width: 18%; font-weight: bold; background: #f2f2f2; }
+  .rules { margin: 10px 0; font-size: 10pt; }
+  .rules ol { margin: 4px 0 0 18px; padding: 0; }
+  .grid { margin: 8px auto 0; }
+  .grid td, .grid th { border: 1px solid #000; width: 58px; text-align: center; padding: 4px; font-size: 10.5pt; }
+  .grid th { background: #f2f2f2; }
+  .grid tr.g td { height: 32px; }
+
+  h2 { font-size: 12pt; margin: 14px 0 4px; border-bottom: 1px solid #000; padding-bottom: 2px; display: flex; justify-content: space-between; }
+  h2 .pts { font-weight: normal; font-style: italic; }
+  h2, .lead { break-after: avoid; }
+  p { margin: 4px 0; }
+  .part { margin: 6px 0 2px; break-after: avoid; }
+  /* :first-child matters — plain `.part > b` would also hit bold words inside the question text */
+  .part > b:first-child { display: inline-block; width: 26px; }
+  .part .pp { float: right; font-style: italic; }
+  /* Ruled answer box. Height is set per box inline; break-inside keeps it on one page. */
+  .ans { break-inside: avoid; border: 1px solid #999; margin: 4px 0 8px 26px; background-image: linear-gradient(to bottom, transparent 23px, #d6d6d6 23px); background-size: 100% 24px; background-repeat: repeat-y; }
+  .ans.blank { background-image: none; }   /* for sketches / graphs */
+  .math { font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif; white-space: nowrap; }
+  .stack { margin: 6px 0 6px 40px; font-family: "Cambria Math", "Times New Roman", serif; line-height: 1.5; }
+  .stack td { padding: 0 6px; }
+  .pb { break-before: page; }
+  .data { margin: 6px auto; }
+  .data td, .data th { border: 1px solid #000; padding: 3px 10px; text-align: center; font-size: 10.5pt; }
+  .data th { background: #f2f2f2; }
+  pre.code { font: 9.5pt/1.35 "JetBrains Mono", Menlo, monospace; border: 1px solid #999; background: #fafafa; padding: 6px 8px; margin: 4px 0 6px 26px; break-inside: avoid; }
+  .end { text-align: center; margin-top: 18px; font-weight: bold; letter-spacing: 2px; }
+</style>
+</head>
+<body>
+<div class="watermark"><span class="wa">AKDENIZ</span><span class="wb">OS.ORG</span></div>
+
+<header>
+  <div class="seal">AKDENIZ<br>UNIV.</div>
+  <div class="inst">
+    <div class="u">AKDENIZ UNIVERSITY</div>
+    <div class="d">Faculty of Engineering · Department of Computer Engineering</div>
+    <div class="c">CSE 427 — Wireless Sensor Networks</div>
+    <div class="e">Midterm Examination (Practice) · Fall 2026-2027</div>
+  </div>
+  <div class="seal">CSE<br>427</div>
+</header>
+
+<div class="notice">PRACTICE PAPER — prepared from the syllabus, the week 1 slides and the course textbooks (Karl &amp; Willig; Dargie &amp; Poellabauer). Not issued by the instructor. Scope: weeks 1-7.</div>
+
+<table class="info">
+  <tr><td class="l">Name Surname</td><td></td><td class="l">Student No.</td><td style="width:26%"></td></tr>
+  <tr><td class="l">Date</td><td>____ / ____ / 20____</td><td class="l">Signature</td><td></td></tr>
+  <tr><td class="l">Duration</td><td>90 minutes</td><td class="l">Total</td><td>100 points</td></tr>
+</table>
+
+<div class="rules">
+  <b>Instructions</b>
+  <ol>
+    <li>Closed book. A non-programmable calculator is allowed. Use log<sub>10</sub> where logarithms appear.</li>
+    <li>Show all work. A correct answer without justification receives no credit.</li>
+    <li>Answer in the space provided. If you need more space, use the back of the page and say so.</li>
+  </ol>
+</div>
+
+<table class="grid">
+  <tr><th>Q</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>Total</th></tr>
+  <tr><th>Max</th><td>14</td><td>14</td><td>18</td><td>20</td><td>20</td><td>14</td><td>100</td></tr>
+  <tr class="g"><th>Score</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</table>
+
+<h2><span>Question 1 — WSN Fundamentals and Application Taxonomy</span><span class="pts">14 points</span></h2>
+<div class="part"><b>(a)</b> Define a <i>mote</i> and a <i>sink / gateway</i>. Give two reasons why a WSN is not "a normal Wi-Fi network made smaller".<span class="pp">4 pts</span></div>
+<div class="ans" style="height:100px"></div>
+<p>A greenhouse WSN produces the four message types below.</p>
+<table class="data">
+  <tr><th>#</th><th>Message</th></tr>
+  <tr><td>M1</td><td>Temperature and humidity every minute</td></tr>
+  <tr><td>M2</td><td>"Overheating!" alarm the moment 40 °C is exceeded</td></tr>
+  <tr><td>M3</td><td>Operator asks a node for its battery level</td></tr>
+  <tr><td>M4</td><td>Gateway commands an actuator node to open the vents</td></tr>
+</table>
+<div class="part"><b>(b)</b> Classify each message as periodic, event-driven, query-driven or control. For each, state whether it most needs <b>low latency</b>, <b>high reliability</b>, <b>authentication</b>, or none of these, with one reason.<span class="pp">6 pts</span></div>
+<div class="ans" style="height:150px"></div>
+<div class="part"><b>(c)</b> Why do security and safety "stop being extra topics" once a WSN controls actuators? Give one concrete attack on M4.<span class="pp">4 pts</span></div>
+<div class="ans" style="height:90px"></div>
+
+<h2><span>Question 2 — Mote Hardware and Contiki</span><span class="pts">14 points</span></h2>
+<div class="part"><b>(a)</b> Draw the block diagram of a mote with the seven blocks from the lecture and the direction of data flow. Mark the two blocks that dominate node lifetime.<span class="pp">5 pts</span></div>
+<div class="ans blank" style="height:170px"></div>
+<p>Consider the Contiki 3.0 process below, compiled for a Sky mote.</p>
+<pre class="code">PROCESS(sense_process, "Sense");
+AUTOSTART_PROCESSES(&amp;sense_process);
+PROCESS_THREAD(sense_process, ev, data)
+{
+  static struct etimer t;
+  PROCESS_BEGIN();
+  while(1) {
+    etimer_set(&amp;t, CLOCK_SECOND * 5);
+    PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&amp;t));
+    printf("sample\n");
+  }
+  PROCESS_END();
+}</pre>
+<div class="part"><b>(b)</b> How often is "sample" printed, and in which Cooja window do you see it? Why must <b>t</b> be declared <b>static</b>? Why is this better than a busy-wait loop on a mote?<span class="pp">5 pts</span></div>
+<div class="ans" style="height:130px"></div>
+<div class="part"><b>(c)</b> In Cooja, compare a <b>Sky mote</b> with a <b>Cooja mote</b>: what does each simulate, and when would you choose each?<span class="pp">4 pts</span></div>
+<div class="ans" style="height:100px"></div>
+
+<h2><span>Question 3 — Radio and Physical Layer</span><span class="pts">18 points</span></h2>
+<p>A mote transmits at <span class="math">P<sub>t</sub> = 0 dBm</span>. Use the log-distance path-loss model with reference loss <span class="math">PL(d<sub>0</sub> = 1 m) = 40 dB</span> and path-loss exponent <span class="math">n = 3</span>:</p>
+<table class="stack">
+  <tr><td>PL(d) = PL(d<sub>0</sub>) + 10 · n · log<sub>10</sub>(d / d<sub>0</sub>) + X<sub>σ</sub></td></tr>
+</table>
+<p>The receiver sensitivity is <span class="math">−94 dBm</span>. Ignore X<sub>σ</sub> in (a) and (b).</p>
+<div class="part"><b>(a)</b> Compute the received power at 20 m.<span class="pp">4 pts</span></div>
+<div class="ans" style="height:80px"></div>
+<div class="part"><b>(b)</b> Compute the maximum communication range.<span class="pp">5 pts</span></div>
+<div class="ans" style="height:90px"></div>
+<div class="part"><b>(c)</b> Now add log-normal shadowing, <span class="math">X<sub>σ</sub> ~ N(0, 4<sup>2</sup>) dB</span>. What is the probability that a link at the range from (b) works? At what distance does a link succeed with probability 0.90? (Use <span class="math">z<sub>0.90</sub> = 1.28</span>.)<span class="pp">5 pts</span></div>
+<div class="ans" style="height:120px"></div>
+<div class="part"><b>(d)</b> Define RSSI, LQI and PRR. Explain the <i>transitional region</i> and why links can be asymmetric.<span class="pp">4 pts</span></div>
+<div class="ans" style="height:110px"></div>
+
+<h2><span>Question 4 — Energy</span><span class="pts">20 points</span></h2>
+<p>A Sky-class mote runs on two AA cells with a usable capacity of <b>2500 mAh</b>. The node is always in exactly one of the states below.</p>
+<table class="data">
+  <tr><th>State</th><th>Current draw</th></tr>
+  <tr><td>Listen / receive (radio RX + MCU active)</td><td>21.5 mA</td></tr>
+  <tr><td>Transmit (radio TX at 0 dBm + MCU active)</td><td>19.2 mA</td></tr>
+  <tr><td>Sleep (radio off, MCU in low-power mode)</td><td>5.1 µA</td></tr>
+</table>
+<div class="part"><b>(a)</b> The radio is never turned off (the node always listens). Compute the lifetime in hours and days.<span class="pp">4 pts</span></div>
+<div class="ans" style="height:80px"></div>
+<div class="part"><b>(b)</b> With radio duty cycling the node listens for 10 ms every second (1%), transmits one 4 ms packet every 60 s, and sleeps otherwise. Compute the average current and the lifetime in days and years.<span class="pp">8 pts</span></div>
+<div class="ans" style="height:170px"></div>
+<div class="part"><b>(c)</b> Which state dominates the average current in (b)? What does this say about where energy optimization should focus?<span class="pp">4 pts</span></div>
+<div class="ans" style="height:90px"></div>
+<div class="part"><b>(d)</b> What does Contiki's <b>Energest</b> module measure, and how do you turn its output into energy in joules?<span class="pp">4 pts</span></div>
+<div class="ans" style="height:90px"></div>
+
+<h2><span>Question 5 — Medium Access Control</span><span class="pts">20 points</span></h2>
+<p class="lead">Four motes stand on a line: <b>A — B — C — D</b>. Each hears only its direct neighbours.</p>
+<div class="part"><b>(a)</b> Using these nodes, give one example of the <b>hidden terminal</b> problem and one of the <b>exposed terminal</b> problem. Explain what goes wrong in each.<span class="pp">6 pts</span></div>
+<div class="ans" style="height:130px"></div>
+<div class="part"><b>(b)</b> Receivers wake every <span class="math">T<sub>w</sub> = 500 ms</span>. Compare how long a sender keeps its radio busy before the data frame starts under <b>B-MAC</b> (long preamble) and <b>X-MAC</b> (strobed preamble with early ACK), assuming the receiver's wake-up time is uniformly random. Why does X-MAC also help overhearing nodes?<span class="pp">6 pts</span></div>
+<div class="ans" style="height:130px"></div>
+<p>Six nodes must get TDMA slots. Two nodes may not share a slot if they interfere; the interference edges are:</p>
+<p style="text-align:center"><span class="math">A–B, A–C, B–C, B–D, C–D, C–E, D–F, E–F</span></p>
+<div class="part"><b>(c)</b> Find a slot assignment with the minimum number of slots and prove it is minimum.<span class="pp">5 pts</span></div>
+<div class="ans" style="height:110px"></div>
+<div class="part"><b>(d)</b> In TSCH, <span class="math">channel = seq[(ASN + channelOffset) mod N]</span>. With hopping sequence <span class="math">seq = [15, 20, 25, 26]</span>, ASN = 1003 and channelOffset = 2, which channel is used? Why does TSCH hop at all?<span class="pp">3 pts</span></div>
+<div class="ans" style="height:80px"></div>
+
+<h2><span>Question 6 — 6LoWPAN and RPL Routing</span><span class="pts">14 points</span></h2>
+<div class="part"><b>(a)</b> Why can't an IPv6 packet be sent directly in an IEEE 802.15.4 frame? Name the two 6LoWPAN mechanisms that solve this.<span class="pp">4 pts</span></div>
+<div class="ans" style="height:90px"></div>
+<p class="lead">After header compression a datagram is <b>400 bytes</b>. Each 802.15.4 frame leaves <b>102 bytes</b> for 6LoWPAN. The first fragment header is 4 bytes, every later one 5 bytes, and every fragment except the last must carry a multiple of 8 bytes of datagram.</p>
+<div class="part"><b>(b)</b> How many fragments are sent, and how many datagram bytes does each carry?<span class="pp">5 pts</span></div>
+<div class="ans" style="height:120px"></div>
+<p>In an RPL DODAG, node X has two candidate parents. Rank is based on ETX (sum of link ETX along the path to the root R).</p>
+<table class="data">
+  <tr><th>Candidate parent</th><th>ETX of link X → parent</th><th>Parent's path ETX to R</th></tr>
+  <tr><td>A</td><td>1.2</td><td>2.0</td></tr>
+  <tr><td>B</td><td>2.5</td><td>1.0</td></tr>
+</table>
+<div class="part"><b>(c)</b> Which parent does X choose, and what is X's path ETX? Would a hop-count metric necessarily choose the same parent? Why is ETX usually the better metric in a WSN?<span class="pp">5 pts</span></div>
+<div class="ans" style="height:120px"></div>
+
+<div class="end">— END OF EXAM · GOOD LUCK —</div>
+</body>
+</html>
