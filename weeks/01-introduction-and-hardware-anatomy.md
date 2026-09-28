@@ -55,7 +55,12 @@ a video submission, and this week's attendance and lab count as bonus points.
 
 Observe: how many motes and what they run, what each prints and when, whether they are in range, which radio medium is selected.
 
-## Submission — due Sunday night (Sep 20)
+Pitfalls:
+- No **Sky mote** in the menu, or "Could not find the MSPSim build file": `tools/mspsim` is an empty git submodule in the image. See [course-info](../course-info.md#known-issues).
+- The Network window's views (**Mote IDs**, **Radio environment (UDGM)**, **Radio traffic**) are off by default — enable them one by one from the window's own **View** menu. Without *Radio environment* there is no range circle and no right-click range/success-ratio settings.
+- `hello-world` prints once at boot and sends nothing; for "a project that sends packets" use `examples/rime/example-broadcast.c` (sends every **4–8 s** — its "2-4 seconds" comment is wrong).
+
+## Submission — due Mon Sep 28, 23:59 (Teams)
 A video showing your work:
 - VMware installation, Instant Contiki 3.0, the configuration.
 - A basic Sky mote project that **sends packets while the simulation is running**.
@@ -87,10 +92,26 @@ Personal notes go below, one `## Notes — <Name> (<term>)` section per person.
 <!-- What was actually covered, and what the lecturer emphasised. -->
 
 ### Lab
-<!-- What you built in Cooja, what you measured, what it means. -->
+Submitted as a lab page (with the video embedded): [efekurucay.com/cse427/week-1-xkq6sx](https://efekurucay.com/cse427/week-1-xkq6sx/) · files in [`assignments/2026-2027-fall-efe/week1`](../assignments/2026-2027-fall-efe/week1/).
+
+- Setup: Windows 11 host, VMware Workstation Pro 26H1, Instant Contiki 3.0 (Ubuntu 14.04 i686) with 4 GB RAM / 2 vCPU / NAT. The image's 1 GB is too little for Cooja (Java) plus MSPSim emulating every mote.
+- Sky mote was missing: empty MSPSim submodule, and the guest cannot reach GitHub. Fixed by copying MSPSim at the pinned commit into `tools/mspsim` and running `ant jar`.
+- `Week1-Hello`: 3 Sky motes running hello-world. Boot log (`Rime started…`, `nullsec CSMA ContikiMAC`) then `Hello, world` once — proves compiler + MSPSim + Cooja, no radio traffic.
+- `Week1-Broadcast`: 3 Sky motes running `example-broadcast.c` in UDGM. Every `broadcast message sent` is followed by `received from X.0: 'Hello'` on the other two.
+  - Radio messages shows entries like `11418+36`: the same frame sent 36 times — ContikiMAC repeats a broadcast for a whole wake-up interval. Payload `48 65 6C 6C 6F` = "Hello".
+  - Timeline: short periodic channel checks (8 Hz) on every mote, a long transmit burst only on the sender.
+  - Dragging a mote out of the green circle cuts it off completely; back inside, reception returns at once. UDGM has no transitional region.
 
 ### Questions
 <!-- Unclear things. Ask, then answer them here. -->
 
 ### Exam-worthy
-<!-- Definitions, trade-offs, protocol steps, pitfalls. -->
+- Six WSN constraints: energy, memory/CPU, lossy and asymmetric links, dynamic topology, scale/density, reliability/timing/security. Improving one usually hurts another.
+- Sky/TelosB = MSP430 MCU + CC2420 radio (IEEE 802.15.4, 2.4 GHz). Mote anatomy: sensor → ADC → MCU → radio → antenna, plus memory and power; radio and power decide lifetime.
+- Radio states: TX, RX, idle, sleep. Idle listening costs energy even with no packets → duty cycling. Duty cycle = fraction of time the radio is on.
+- Contiki 3.0 is event-driven; processes are protothreads (blocking-looking code, no per-process stack). `etimer` + `PROCESS_WAIT_EVENT_UNTIL` = sleep instead of busy waiting.
+- Boot line `nullsec CSMA ContikiMAC`: no link security · CSMA MAC (listen before send) · ContikiMAC RDC (radio mostly off).
+- Broadcast has no ACK — the sender never learns whether anyone received it. Unicast is acknowledged.
+- Transmission range = packet can be received; interference range = cannot be decoded but can corrupt other receptions (root of the hidden-terminal problem, week 4).
+- MSPSim **emulates** the real MCU/radio instruction by instruction; Cooja **simulates** the radio environment (UDGM is an approximation). Don't overclaim real-world range from a Cooja parameter.
+- Cross-compilation: `msp430-gcc` builds on the VM for a different CPU (the mote).

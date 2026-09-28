@@ -65,6 +65,22 @@ use the slides for those.
   less hardware-faithful), Java mote, Z1 / Wismote.
 - Report problems as *path, command, exact error message* — never "it did not work".
 
+### Known issues
+
+- **Apple Silicon Macs cannot run the image** (it is 32-bit x86; VMware Fusion on ARM runs only ARM guests). Use a Windows/Intel PC.
+- **No Sky mote in Cooja / "Could not find the MSPSim build file"**: `tools/mspsim` is an empty git submodule in the image, and `git submodule update --init` fails inside the guest because its CA certificates are too old for GitHub. Fetch it on the host instead:
+  ```
+  # in the guest: which MSPSim commit does this Contiki expect?
+  cd ~/contiki && git ls-tree HEAD tools/mspsim      # 58f1873… for Contiki eaa8760
+  # on the host
+  git clone https://github.com/contiki-os/mspsim && cd mspsim && git checkout <commit>
+  # copy the folder into ~/contiki/tools/mspsim in the guest, then
+  cd ~/contiki/tools/cooja && ant jar
+  ```
+- `~/contiki` is the git checkout (commit `eaa8760`); `~/contiki-3.0` is a plain copy without git. The week 2 lab deck writes `~/contiki-3.0` — either works once MSPSim is fixed in the one you use.
+- Guest keyboard may start as Swedish; switch the layout (top-bar indicator, or `setxkbmap tr` / `setxkbmap us`) before typing paths.
+- Cooja's Network window starts with its views off: enable **Mote IDs**, **Radio environment (UDGM)** and **Radio traffic** from that window's **View** menu. UDGM range and TX/RX success ratios are then set by right-clicking empty space in the Network window.
+
 Links: [Contiki OS](https://github.com/contiki-os/contiki) ·
 [wiki](https://github.com/contiki-os/contiki/wiki) ·
 [Introduction to COOJA](https://github.com/contiki-os/contiki/wiki/An-Introduction-to-COOJA) ·
