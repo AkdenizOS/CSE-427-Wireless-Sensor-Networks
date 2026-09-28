@@ -1,8 +1,6 @@
 # Week 1 — Efe
 
-Submitted on Teams as a link to the lab page.
-
-- Lab page: https://efekurucay.com/cse427/week-1-xkq6sx/
+Submitted on Teams as a link to a personal lab page with the video.
 
 | File | What it is |
 |------|-----------|

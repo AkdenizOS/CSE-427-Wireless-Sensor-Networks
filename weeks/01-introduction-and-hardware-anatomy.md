@@ -92,7 +92,7 @@ Personal notes go below, one `## Notes — <Name> (<term>)` section per person.
 <!-- What was actually covered, and what the lecturer emphasised. -->
 
 ### Lab
-Submitted as a lab page (with the video embedded): [efekurucay.com/cse427/week-1-xkq6sx](https://efekurucay.com/cse427/week-1-xkq6sx/) · files in [`assignments/2026-2027-fall-efe/week1`](../assignments/2026-2027-fall-efe/week1/).
+Submitted on Teams as a link to a personal lab page with the video. Files in [`assignments/2026-2027-fall-efe/week1`](../assignments/2026-2027-fall-efe/week1/).
 
 - Setup: Windows 11 host, VMware Workstation Pro 26H1, Instant Contiki 3.0 (Ubuntu 14.04 i686) with 4 GB RAM / 2 vCPU / NAT. The image's 1 GB is too little for Cooja (Java) plus MSPSim emulating every mote.
 - Sky mote was missing: empty MSPSim submodule, and the guest cannot reach GitHub. Fixed by copying MSPSim at the pinned commit into `tools/mspsim` and running `ant jar`.
