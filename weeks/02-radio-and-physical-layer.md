@@ -64,9 +64,15 @@ of the way. Code is in the lab deck appendix — put it in `examples/week2-radio
 7. **E — PRR**: count received out of 20 in the reduced-success run, `PRR = received / sent`.
 8. Optional: second simulation `Week2-MRM` with Multi-path Ray-tracer Medium, compare.
 
-Pitfalls: Rime channel 129 is a software ID, not an 802.15.4 PHY channel — mismatch = no RX.
-UDGM transmission range is a simulation knob, not real Sky range. RX = 0.6 does not mean
-exactly 12 of 20.
+Pitfalls:
+- Rime channel 129 is a software ID, not an 802.15.4 PHY channel — mismatch = no RX.
+- UDGM transmission range is a simulation knob, not real Sky range.
+- The lab deck's Makefile does not link: add `CONTIKI_WITH_RIME = 1` (otherwise `undefined reference to broadcast_send`).
+- Set **Speed limit → 100%** in Simulation control, or packets scroll past faster than you can count.
+- UDGM's RX success ratio is distance-scaled: `P = 1 − (d/range)² × (1 − RX)` (`UDGM.java`). With RX = 0.6 the receiver sees ~99% next to the sender, ~90% at half range and 60% only at the edge — put the receiver at the edge for the loss experiment (Cooja prints the probability next to the mote).
+- ContikiMAC repeats each broadcast for a wake-up interval, so a moderate per-copy loss (≈ 90% success) still delivers every packet.
+- The printed RSSI is 45 dB too low: the lab code subtracts 45, and Contiki's cc2420 driver has already applied `RSSI_OFFSET`. Real dBm = printed + 45.
+- LQI is constant (37) in UDGM — it does not model decoding quality.
 
 ## Submission — due Sun Oct 4, 23:59
 Same rules as week 1: a video (≥ 10 min, full screen, you on camera, clear English,
@@ -108,10 +114,34 @@ Personal notes go below, one `## Notes — <Name> (<term>)` section per person.
 <!-- What was actually covered, and what the lecturer emphasised. -->
 
 ### Lab
-<!-- What you built in Cooja, what you measured, what it means. -->
+Submitted on Teams as a link to a personal lab page with the video. Files in [`assignments/2026-2027-fall-efe/week2`](../assignments/2026-2027-fall-efe/week2/).
+
+Setup: 1 Sky sender + 1 Sky receiver, Rime broadcast every second, UDGM with TX range 20 m / interference 40 m, speed 100%.
+
+| Experiment | Distance | Sent | Received | RSSI printed | RSSI real | LQI |
+|---|---|---|---|---|---|---|
+| B close | ≈ 4 m | 20 | 20 | −71 dBm | −26 dBm | 37 |
+| B medium | ≈ 10 m | 20 | 20 | −98 dBm | −53 dBm | 37 |
+| B far | ≈ 15 m | 20 | 20 | −117 dBm | −72 dBm | 37 |
+| C outside range | > 20 m | 15 | 0 | — | — | — |
+| D RX ratio 60% | ≈ 10 m | 20 | 20 | −99 dBm | −54 dBm | 37 |
+
+- RSSI falls linearly with distance (UDGM: `−10 − 85 × d/range` dBm); delivery inside the range stays at 100%.
+- Crossing the boundary: 15 consecutive packets lost (seq 493–507), reception back immediately inside. No transitional region in UDGM.
+- RX ratio 60% at ≈ 10 m: Cooja showed 89.2%, and none of 70 packets was lost (PRR = 1.00) — distance scaling plus ContikiMAC's repeated broadcasts.
+- Not measured: the receiver at the very edge with RX 60%, where loss becomes visible.
 
 ### Questions
 <!-- Unclear things. Ask, then answer them here. -->
 
 ### Exam-worthy
-<!-- Definitions, trade-offs, protocol steps, pitfalls. -->
+- dBm = absolute power relative to 1 mW (0 dBm = 1 mW, −60 dBm stronger than −90 dBm); dB = ratio. +3 dB ≈ ×2, +10 dB = ×10. A path loss is in dB, never dBm.
+- Link budget: `P_r = P_t + G_t + G_r − PL − L_s`. Log-distance: `PL(d) = PL(d₀) + 10·n·log10(d/d₀)`, n = 2 in free space, larger indoors.
+- Path loss (average, distance) vs shadowing (obstacles, slow) vs fading (multipath, fast). λ ≈ 12.5 cm at 2.4 GHz.
+- RSSI = strength of a received packet; LQI = decode quality of a received frame (radio-specific); PRR = received / sent over a window, needs sequence numbers. RSSI and LQI exist only for packets that arrived — only PRR sees losses.
+- Strong RSSI + low PRR → collision/interference. High LQI + low PRR → lost packets are invisible to LQI.
+- Link regions: connected / transitional / disconnected; transitional links cost the most (retransmissions, route flapping). Hysteresis: add at PRR > 0.8, drop at < 0.5.
+- Asymmetry: exchange success = PRR_forward × PRR_reverse (0.90 × 0.50 = 0.45).
+- 802.15.4 2.4 GHz: channels 11–26, 5 MHz spacing, 250 kb/s, 4 bits → 1 symbol → 32 chips, O-QPSK + DSSS; PPDU = preamble 4 B, SFD 1 B, PHR 1 B, PSDU ≤ 127 B. 802.15.4 ≠ Zigbee.
+- Rime channel (software ID) ≠ radio channel.
+- Simulation result = code + topology + radio model; never report a result without the radio medium, and do not read real range off a Cooja parameter.
