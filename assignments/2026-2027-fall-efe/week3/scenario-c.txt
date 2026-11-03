@@ -1,0 +1,608 @@
+Random seed: 123456
+511.468	ID:2	Rime started with address 0.18.116.2.0.2.2.2
+520.668	ID:2	MAC 00:12:74:02:00:02:02:02 Contiki-2.6-2450-geaa8760 started. Node id is set to 2.
+529.191	ID:2	nullsec CSMA ContikiMAC, channel check rate 8 Hz, radio channel 26, CCA threshold -45
+540.087	ID:2	Tentative link-local IPv6 address fe80:0000:0000:0000:0212:7402:0002:0202
+543.161	ID:2	Starting 'DNS resolver' 'UDP client process'
+657.287	ID:1	Rime started with address 0.18.116.1.0.1.1.1
+666.488	ID:1	MAC 00:12:74:01:00:01:01:01 Contiki-2.6-2450-geaa8760 started. Node id is set to 1.
+675.009	ID:1	nullsec CSMA ContikiMAC, channel check rate 8 Hz, radio channel 26, CCA threshold -45
+685.905	ID:1	Tentative link-local IPv6 address fe80:0000:0000:0000:0212:7401:0001:0101
+688.979	ID:1	Starting 'DNS resolver' 'UDP server process'
+7912.942	ID:2	TX: Hello 1 from the client
+8053.007	ID:1	Server received: 'Hello 1 from the client'
+8156.462	ID:2	Response from the server: 'Hello from the server! (1)'
+12912.942	ID:2	TX: Hello 2 from the client
+13053.014	ID:1	Server received: 'Hello 2 from the client'
+13158.968	ID:2	Response from the server: 'Hello from the server! (2)'
+17912.942	ID:2	TX: Hello 3 from the client
+18053.006	ID:1	Server received: 'Hello 3 from the client'
+18158.978	ID:2	Response from the server: 'Hello from the server! (3)'
+22912.942	ID:2	TX: Hello 4 from the client
+23053.006	ID:1	Server received: 'Hello 4 from the client'
+23158.968	ID:2	Response from the server: 'Hello from the server! (4)'
+27912.942	ID:2	TX: Hello 5 from the client
+28053.014	ID:1	Server received: 'Hello 5 from the client'
+28158.968	ID:2	Response from the server: 'Hello from the server! (5)'
+30573.271	ID:2	 3846 P 0.18 0 73092 910759 35739 19569 0 5945 73092 910759 35739 19569 0 5945 (radio 5.62% / 5.62% tx 3.63% / 3.63% listen 1.98% / 1.98%)
+30719.02	ID:1	 3846 P 0.18 0 57608 926223 27904 17314 0 6343 57608 926223 27904 17314 0 6343 (radio 4.59% / 4.59% tx 2.83% / 2.83% listen 1.75% / 1.75%)
+32912.962	ID:2	TX: Hello 6 from the client
+33053.006	ID:1	Server received: 'Hello 6 from the client'
+33158.978	ID:2	Response from the server: 'Hello from the server! (6)'
+37912.942	ID:2	TX: Hello 7 from the client
+38053.006	ID:1	Server received: 'Hello 7 from the client'
+38158.968	ID:2	Response from the server: 'Hello from the server! (7)'
+42912.942	ID:2	TX: Hello 8 from the client
+43053.014	ID:1	Server received: 'Hello 8 from the client'
+43158.968	ID:2	Response from the server: 'Hello from the server! (8)'
+47912.942	ID:2	TX: Hello 9 from the client
+48053.006	ID:1	Server received: 'Hello 9 from the client'
+48158.978	ID:2	Response from the server: 'Hello from the server! (9)'
+52913.108	ID:2	TX: Hello 10 from the client
+53054.352	ID:1	Server received: 'Hello 10 from the client'
+53158.847	ID:2	Response from the server: 'Hello from the server! (10)'
+57913.108	ID:2	TX: Hello 11 from the client
+58054.581	ID:1	Server received: 'Hello 11 from the client'
+58159.002	ID:2	Response from the server: 'Hello from the server! (11)'
+60574.157	ID:2	 7686 P 0.18 1 111184 1855323 51491 35790 0 11873 38090 944564 15752 16221 0 5928 (radio 4.43% / 3.25% tx 2.61% / 1.60% listen 1.81% / 1.65%)
+60719.721	ID:1	 7686 P 0.18 1 87229 1879286 39186 30908 0 12453 29618 953063 11282 13594 0 6110 (radio 3.56% / 2.53% tx 1.99% / 1.14% listen 1.57% / 1.38%)
+62913.127	ID:2	TX: Hello 12 from the client
+63054.352	ID:1	Server received: 'Hello 12 from the client'
+63158.822	ID:2	Response from the server: 'Hello from the server! (12)'
+67913.108	ID:2	TX: Hello 13 from the client
+68054.352	ID:1	Server received: 'Hello 13 from the client'
+68158.847	ID:2	Response from the server: 'Hello from the server! (13)'
+72913.108	ID:2	TX: Hello 14 from the client
+73054.581	ID:1	Server received: 'Hello 14 from the client'
+73159.002	ID:2	Response from the server: 'Hello from the server! (14)'
+77913.108	ID:2	TX: Hello 15 from the client
+78054.352	ID:1	Server received: 'Hello 15 from the client'
+78158.822	ID:2	Response from the server: 'Hello from the server! (15)'
+82913.108	ID:2	TX: Hello 16 from the client
+83054.352	ID:1	Server received: 'Hello 16 from the client'
+83158.847	ID:2	Response from the server: 'Hello from the server! (16)'
+87913.108	ID:2	TX: Hello 17 from the client
+88054.581	ID:1	Server received: 'Hello 17 from the client'
+88159.002	ID:2	Response from the server: 'Hello from the server! (17)'
+90574.757	ID:2	 11526 P 0.18 2 154192 2794971 70015 52334 0 17952 43006 939648 18524 16544 0 6079 (radio 4.14% / 3.56% tx 2.37% / 1.88% listen 1.77% / 1.68%)
+90720.499	ID:1	 11526 P 0.18 2 121290 2827909 52952 44597 0 18563 34058 948623 13766 13689 0 6110 (radio 3.30% / 2.79% tx 1.79% / 1.40% listen 1.51% / 1.39%)
+92913.127	ID:2	TX: Hello 18 from the client
+93054.352	ID:1	Server received: 'Hello 18 from the client'
+93158.822	ID:2	Response from the server: 'Hello from the server! (18)'
+97913.108	ID:2	TX: Hello 19 from the client
+98054.352	ID:1	Server received: 'Hello 19 from the client'
+98158.847	ID:2	Response from the server: 'Hello from the server! (19)'
+102913.108	ID:2	TX: Hello 20 from the client
+103054.581	ID:1	Server received: 'Hello 20 from the client'
+103159.002	ID:2	Response from the server: 'Hello from the server! (20)'
+107913.108	ID:2	TX: Hello 21 from the client
+108054.352	ID:1	Server received: 'Hello 21 from the client'
+108158.822	ID:2	Response from the server: 'Hello from the server! (21)'
+112913.108	ID:2	TX: Hello 22 from the client
+113054.352	ID:1	Server received: 'Hello 22 from the client'
+113158.847	ID:2	Response from the server: 'Hello from the server! (22)'
+117913.108	ID:2	TX: Hello 23 from the client
+118054.581	ID:1	Server received: 'Hello 23 from the client'
+118159.002	ID:2	Response from the server: 'Hello from the server! (23)'
+120574.756	ID:2	 15366 P 0.18 3 192576 3739240 85949 68615 0 23880 38382 944269 15934 16281 0 5928 (radio 3.93% / 3.27% tx 2.18% / 1.62% listen 1.74% / 1.65%)
+120720.51	ID:1	 15366 P 0.18 3 150738 3781143 64132 58069 0 24725 29445 953234 11180 13472 0 6162 (radio 3.10% / 2.50% tx 1.63% / 1.13% listen 1.47% / 1.37%)
+122913.127	ID:2	TX: Hello 24 from the client
+123054.352	ID:1	Server received: 'Hello 24 from the client'
+123158.822	ID:2	Response from the server: 'Hello from the server! (24)'
+127913.108	ID:2	TX: Hello 25 from the client
+128054.352	ID:1	Server received: 'Hello 25 from the client'
+128158.847	ID:2	Response from the server: 'Hello from the server! (25)'
+132913.108	ID:2	TX: Hello 26 from the client
+133054.581	ID:1	Server received: 'Hello 26 from the client'
+133159.002	ID:2	Response from the server: 'Hello from the server! (26)'
+137913.108	ID:2	TX: Hello 27 from the client
+138054.352	ID:1	Server received: 'Hello 27 from the client'
+138158.822	ID:2	Response from the server: 'Hello from the server! (27)'
+142913.108	ID:2	TX: Hello 28 from the client
+143054.352	ID:1	Server received: 'Hello 28 from the client'
+143158.847	ID:2	Response from the server: 'Hello from the server! (28)'
+147913.108	ID:2	TX: Hello 29 from the client
+148054.581	ID:1	Server received: 'Hello 29 from the client'
+148159.002	ID:2	Response from the server: 'Hello from the server! (29)'
+150575.038	ID:2	 19206 P 0.18 4 235606 4678866 104473 85159 0 29959 43028 939626 18524 16544 0 6079 (radio 3.85% / 3.56% tx 2.12% / 1.88% listen 1.73% / 1.68%)
+150720.409	ID:1	 19206 P 0.18 4 184829 4729736 77898 71758 0 30835 34088 948593 13766 13689 0 6110 (radio 3.04% / 2.79% tx 1.58% / 1.40% listen 1.46% / 1.39%)
+152913.128	ID:2	TX: Hello 30 from the client
+153054.352	ID:1	Server received: 'Hello 30 from the client'
+153158.822	ID:2	Response from the server: 'Hello from the server! (30)'
+157913.109	ID:2	TX: Hello 31 from the client
+158054.352	ID:1	Server received: 'Hello 31 from the client'
+158158.809	ID:2	Response from the server: 'Hello from the server! (31)'
+162913.109	ID:2	TX: Hello 32 from the client
+163054.581	ID:1	Server received: 'Hello 32 from the client'
+163158.939	ID:2	Response from the server: 'Hello from the server! (32)'
+167913.109	ID:2	TX: Hello 33 from the client
+168054.352	ID:1	Server received: 'Hello 33 from the client'
+168158.822	ID:2	Response from the server: 'Hello from the server! (33)'
+172913.109	ID:2	TX: Hello 34 from the client
+173054.352	ID:1	Server received: 'Hello 34 from the client'
+173158.809	ID:2	Response from the server: 'Hello from the server! (34)'
+177913.109	ID:2	TX: Hello 35 from the client
+178054.581	ID:1	Server received: 'Hello 35 from the client'
+178158.939	ID:2	Response from the server: 'Hello from the server! (35)'
+180575.364	ID:2	 23046 P 0.18 5 274021 5623101 120400 101436 0 35887 38413 944235 15927 16277 0 5928 (radio 3.76% / 3.27% tx 2.04% / 1.62% listen 1.72% / 1.65%)
+180720.528	ID:1	 23046 P 0.18 5 214286 5682975 89084 85248 0 36997 29454 953239 11186 13490 0 6162 (radio 2.95% / 2.51% tx 1.51% / 1.13% listen 1.44% / 1.37%)
+182913.128	ID:2	TX: Hello 36 from the client
+183054.352	ID:1	Server received: 'Hello 36 from the client'
+183158.822	ID:2	Response from the server: 'Hello from the server! (36)'
+187913.109	ID:2	TX: Hello 37 from the client
+188054.352	ID:1	Server received: 'Hello 37 from the client'
+188158.809	ID:2	Response from the server: 'Hello from the server! (37)'
+192913.109	ID:2	TX: Hello 38 from the client
+193054.581	ID:1	Server received: 'Hello 38 from the client'
+193158.939	ID:2	Response from the server: 'Hello from the server! (38)'
+197913.109	ID:2	TX: Hello 39 from the client
+198054.352	ID:1	Server received: 'Hello 39 from the client'
+198158.822	ID:2	Response from the server: 'Hello from the server! (39)'
+202913.108	ID:2	TX: Hello 40 from the client
+203054.352	ID:1	Server received: 'Hello 40 from the client'
+203158.847	ID:2	Response from the server: 'Hello from the server! (40)'
+207913.108	ID:2	TX: Hello 41 from the client
+208054.581	ID:1	Server received: 'Hello 41 from the client'
+208159.002	ID:2	Response from the server: 'Hello from the server! (41)'
+210575.375	ID:2	 26886 P 0.18 6 317084 6562693 138919 117979 0 41966 43061 939592 18519 16543 0 6079 (radio 3.73% / 3.56% tx 2.01% / 1.88% listen 1.71% / 1.68%)
+210720.81	ID:1	 26886 P 0.18 6 248386 6631567 102853 98947 0 43107 34097 948592 13769 13699 0 6110 (radio 2.93% / 2.79% tx 1.49% / 1.40% listen 1.43% / 1.39%)
+212913.127	ID:2	TX: Hello 42 from the client
+213054.352	ID:1	Server received: 'Hello 42 from the client'
+213158.822	ID:2	Response from the server: 'Hello from the server! (42)'
+217913.108	ID:2	TX: Hello 43 from the client
+218054.352	ID:1	Server received: 'Hello 43 from the client'
+218158.847	ID:2	Response from the server: 'Hello from the server! (43)'
+222913.108	ID:2	TX: Hello 44 from the client
+223054.581	ID:1	Server received: 'Hello 44 from the client'
+223159.002	ID:2	Response from the server: 'Hello from the server! (44)'
+227913.108	ID:2	TX: Hello 45 from the client
+228054.352	ID:1	Server received: 'Hello 45 from the client'
+228158.822	ID:2	Response from the server: 'Hello from the server! (45)'
+232913.108	ID:2	TX: Hello 46 from the client
+233054.352	ID:1	Server received: 'Hello 46 from the client'
+233158.847	ID:2	Response from the server: 'Hello from the server! (46)'
+237913.108	ID:2	TX: Hello 47 from the client
+238054.581	ID:1	Server received: 'Hello 47 from the client'
+238159.002	ID:2	Response from the server: 'Hello from the server! (47)'
+240575.48	ID:2	 30726 P 0.18 7 355496 7506933 154853 134260 0 47894 38410 944240 15934 16281 0 5928 (radio 3.67% / 3.27% tx 1.96% / 1.62% listen 1.70% / 1.65%)
+240721.228	ID:1	 30726 P 0.18 7 277852 7584783 114033 112419 0 49269 29463 953216 11180 13472 0 6162 (radio 2.88% / 2.50% tx 1.45% / 1.13% listen 1.42% / 1.37%)
+242913.127	ID:2	TX: Hello 48 from the client
+243054.352	ID:1	Server received: 'Hello 48 from the client'
+243158.822	ID:2	Response from the server: 'Hello from the server! (48)'
+247913.108	ID:2	TX: Hello 49 from the client
+248054.352	ID:1	Server received: 'Hello 49 from the client'
+248158.847	ID:2	Response from the server: 'Hello from the server! (49)'
+252913.109	ID:2	TX: Hello 50 from the client
+253054.581	ID:1	Server received: 'Hello 50 from the client'
+253158.939	ID:2	Response from the server: 'Hello from the server! (50)'
+257913.109	ID:2	TX: Hello 51 from the client
+258054.352	ID:1	Server received: 'Hello 51 from the client'
+258158.822	ID:2	Response from the server: 'Hello from the server! (51)'
+262913.109	ID:2	TX: Hello 52 from the client
+263054.352	ID:1	Server received: 'Hello 52 from the client'
+263158.809	ID:2	Response from the server: 'Hello from the server! (52)'
+267913.109	ID:2	TX: Hello 53 from the client
+268054.581	ID:1	Server received: 'Hello 53 from the client'
+268158.939	ID:2	Response from the server: 'Hello from the server! (53)'
+270575.491	ID:2	 34566 P 0.18 8 398576 8446508 173373 150804 0 53973 43078 939575 18520 16544 0 6079 (radio 3.66% / 3.56% tx 1.96% / 1.88% listen 1.70% / 1.68%)
+270721.24	ID:1	 34566 P 0.18 8 311977 8533350 127798 126120 0 55379 34122 948567 13765 13701 0 6110 (radio 2.87% / 2.79% tx 1.44% / 1.40% listen 1.42% / 1.39%)
+272913.128	ID:2	TX: Hello 54 from the client
+273054.352	ID:1	Server received: 'Hello 54 from the client'
+273158.822	ID:2	Response from the server: 'Hello from the server! (54)'
+277913.109	ID:2	TX: Hello 55 from the client
+278054.352	ID:1	Server received: 'Hello 55 from the client'
+278158.809	ID:2	Response from the server: 'Hello from the server! (55)'
+282913.109	ID:2	TX: Hello 56 from the client
+283054.581	ID:1	Server received: 'Hello 56 from the client'
+283158.939	ID:2	Response from the server: 'Hello from the server! (56)'
+287913.109	ID:2	TX: Hello 57 from the client
+288054.352	ID:1	Server received: 'Hello 57 from the client'
+288158.822	ID:2	Response from the server: 'Hello from the server! (57)'
+292913.109	ID:2	TX: Hello 58 from the client
+293054.352	ID:1	Server received: 'Hello 58 from the client'
+293158.809	ID:2	Response from the server: 'Hello from the server! (58)'
+297913.109	ID:2	TX: Hello 59 from the client
+298054.581	ID:1	Server received: 'Hello 59 from the client'
+298158.939	ID:2	Response from the server: 'Hello from the server! (59)'
+300575.466	ID:2	 38406 P 0.18 9 437014 9390721 189300 167081 0 59901 38436 944213 15927 16277 0 5928 (radio 3.62% / 3.27% tx 1.92% / 1.62% listen 1.70% / 1.65%)
+300721.234	ID:1	 38406 P 0.18 9 341469 9486554 138984 139610 0 61541 29489 953204 11186 13490 0 6162 (radio 2.83% / 2.51% tx 1.41% / 1.13% listen 1.42% / 1.37%)
+302913.128	ID:2	TX: Hello 60 from the client
+303054.352	ID:1	Server received: 'Hello 60 from the client'
+303158.822	ID:2	Response from the server: 'Hello from the server! (60)'
+307913.109	ID:2	TX: Hello 61 from the client
+308054.352	ID:1	Server received: 'Hello 61 from the client'
+308158.809	ID:2	Response from the server: 'Hello from the server! (61)'
+312913.109	ID:2	TX: Hello 62 from the client
+313054.581	ID:1	Server received: 'Hello 62 from the client'
+313158.939	ID:2	Response from the server: 'Hello from the server! (62)'
+317913.109	ID:2	TX: Hello 63 from the client
+318054.352	ID:1	Server received: 'Hello 63 from the client'
+318158.822	ID:2	Response from the server: 'Hello from the server! (63)'
+322913.109	ID:2	TX: Hello 64 from the client
+323054.352	ID:1	Server received: 'Hello 64 from the client'
+323158.809	ID:2	Response from the server: 'Hello from the server! (64)'
+327913.109	ID:2	TX: Hello 65 from the client
+328054.581	ID:1	Server received: 'Hello 65 from the client'
+328158.939	ID:2	Response from the server: 'Hello from the server! (65)'
+330575.95	ID:2	 42246 P 0.18 10 480097 10330291 207817 183621 0 65980 43081 939570 18517 16540 0 6079 (radio 3.62% / 3.56% tx 1.92% / 1.88% listen 1.69% / 1.68%)
+330721.764	ID:1	 42246 P 0.18 10 375604 10435118 152756 153317 0 67651 34132 948564 13772 13707 0 6110 (radio 2.83% / 2.79% tx 1.41% / 1.40% listen 1.41% / 1.39%)
+332913.128	ID:2	TX: Hello 66 from the client
+333054.352	ID:1	Server received: 'Hello 66 from the client'
+333158.822	ID:2	Response from the server: 'Hello from the server! (66)'
+337913.109	ID:2	TX: Hello 67 from the client
+338054.352	ID:1	Server received: 'Hello 67 from the client'
+338158.809	ID:2	Response from the server: 'Hello from the server! (67)'
+342913.109	ID:2	TX: Hello 68 from the client
+343054.581	ID:1	Server received: 'Hello 68 from the client'
+343158.939	ID:2	Response from the server: 'Hello from the server! (68)'
+347913.109	ID:2	TX: Hello 69 from the client
+348054.352	ID:1	Server received: 'Hello 69 from the client'
+348158.822	ID:2	Response from the server: 'Hello from the server! (69)'
+352913.11	ID:2	TX: Hello 70 from the client
+353054.352	ID:1	Server received: 'Hello 70 from the client'
+353158.847	ID:2	Response from the server: 'Hello from the server! (70)'
+357913.11	ID:2	TX: Hello 71 from the client
+358054.581	ID:1	Server received: 'Hello 71 from the client'
+358159.002	ID:2	Response from the server: 'Hello from the server! (71)'
+360575.961	ID:2	 46086 P 0.18 11 518545 11274495 223744 199891 0 71908 38446 944204 15927 16270 0 5928 (radio 3.59% / 3.27% tx 1.89% / 1.62% listen 1.69% / 1.65%)
+360721.758	ID:1	 46086 P 0.18 11 405120 11388297 163939 166800 0 73813 29513 953179 11183 13483 0 6162 (radio 2.80% / 2.51% tx 1.39% / 1.13% listen 1.41% / 1.37%)
+362913.129	ID:2	TX: Hello 72 from the client
+363054.352	ID:1	Server received: 'Hello 72 from the client'
+363158.862	ID:2	Response from the server: 'Hello from the server! (72)'
+367913.11	ID:2	TX: Hello 73 from the client
+368054.352	ID:1	Server received: 'Hello 73 from the client'
+368158.847	ID:2	Response from the server: 'Hello from the server! (73)'
+372913.11	ID:2	TX: Hello 74 from the client
+373054.581	ID:1	Server received: 'Hello 74 from the client'
+373159.002	ID:2	Response from the server: 'Hello from the server! (74)'
+377913.11	ID:2	TX: Hello 75 from the client
+378054.352	ID:1	Server received: 'Hello 75 from the client'
+378158.822	ID:2	Response from the server: 'Hello from the server! (75)'
+382913.11	ID:2	TX: Hello 76 from the client
+383054.352	ID:1	Server received: 'Hello 76 from the client'
+383158.847	ID:2	Response from the server: 'Hello from the server! (76)'
+387913.11	ID:2	TX: Hello 77 from the client
+388054.581	ID:1	Server received: 'Hello 77 from the client'
+388159.002	ID:2	Response from the server: 'Hello from the server! (77)'
+390576.208	ID:2	 49926 P 0.18 12 561631 12214066 242261 216413 0 77987 43084 939571 18517 16522 0 6079 (radio 3.-278% / 3.56% tx 1.89% / 1.88% listen 1.69% / 1.68%)
+390721.762	ID:1	 49926 P 0.18 12 439276 12336833 177697 180487 0 79923 34153 948536 13758 13687 0 6110 (radio 2.80% / 2.79% tx 1.39% / 1.40% listen 1.41% / 1.39%)
+392913.129	ID:2	TX: Hello 78 from the client
+393054.352	ID:1	Server received: 'Hello 78 from the client'
+393158.862	ID:2	Response from the server: 'Hello from the server! (78)'
+397913.11	ID:2	TX: Hello 79 from the client
+398054.352	ID:1	Server received: 'Hello 79 from the client'
+398158.847	ID:2	Response from the server: 'Hello from the server! (79)'
+402913.108	ID:2	TX: Hello 80 from the client
+403054.581	ID:1	Server received: 'Hello 80 from the client'
+403159.002	ID:2	Response from the server: 'Hello from the server! (80)'
+407913.108	ID:2	TX: Hello 81 from the client
+408054.352	ID:1	Server received: 'Hello 81 from the client'
+408158.822	ID:2	Response from the server: 'Hello from the server! (81)'
+412913.108	ID:2	TX: Hello 82 from the client
+413054.352	ID:1	Server received: 'Hello 82 from the client'
+413158.847	ID:2	Response from the server: 'Hello from the server! (82)'
+417913.108	ID:2	TX: Hello 83 from the client
+418054.581	ID:1	Server received: 'Hello 83 from the client'
+418159.002	ID:2	Response from the server: 'Hello from the server! (83)'
+420576.169	ID:2	 53766 P 0.18 13 600084 13158268 258192 232691 0 83915 38451 944202 15931 16278 0 5928 (radio 3.-256% / 3.27% tx 1.87% / 1.62% listen 1.69% / 1.65%)
+420721.76	ID:1	 53766 P 0.18 13 468793 13290004 188870 193956 0 86085 29514 953171 11173 13469 0 6162 (radio 2.78% / 2.50% tx 1.37% / 1.13% listen 1.40% / 1.37%)
+422913.127	ID:2	TX: Hello 84 from the client
+423054.352	ID:1	Server received: 'Hello 84 from the client'
+423158.822	ID:2	Response from the server: 'Hello from the server! (84)'
+427913.108	ID:2	TX: Hello 85 from the client
+428054.352	ID:1	Server received: 'Hello 85 from the client'
+428158.847	ID:2	Response from the server: 'Hello from the server! (85)'
+432913.108	ID:2	TX: Hello 86 from the client
+433054.581	ID:1	Server received: 'Hello 86 from the client'
+433159.002	ID:2	Response from the server: 'Hello from the server! (86)'
+437913.108	ID:2	TX: Hello 87 from the client
+438054.352	ID:1	Server received: 'Hello 87 from the client'
+438158.822	ID:2	Response from the server: 'Hello from the server! (87)'
+442913.108	ID:2	TX: Hello 88 from the client
+443054.352	ID:1	Server received: 'Hello 88 from the client'
+443158.847	ID:2	Response from the server: 'Hello from the server! (88)'
+447913.108	ID:2	TX: Hello 89 from the client
+448054.581	ID:1	Server received: 'Hello 89 from the client'
+448159.002	ID:2	Response from the server: 'Hello from the server! (89)'
+450576.19	ID:2	 57606 P 0.18 14 643180 14097827 276716 249235 0 89994 43094 939559 18524 16544 0 6079 (radio 3.-235% / 3.56% tx 1.87% / 1.88% listen 1.69% / 1.68%)
+450721.764	ID:1	 57606 P 0.18 14 502945 14238537 202636 207645 0 92195 34149 948533 13766 13689 0 6110 (radio 2.78% / 2.79% tx 1.37% / 1.40% listen 1.40% / 1.39%)
+452913.128	ID:2	TX: Hello 90 from the client
+453054.352	ID:1	Server received: 'Hello 90 from the client'
+453158.822	ID:2	Response from the server: 'Hello from the server! (90)'
+457913.109	ID:2	TX: Hello 91 from the client
+458054.352	ID:1	Server received: 'Hello 91 from the client'
+458158.809	ID:2	Response from the server: 'Hello from the server! (91)'
+462913.109	ID:2	TX: Hello 92 from the client
+463054.581	ID:1	Server received: 'Hello 92 from the client'
+463158.939	ID:2	Response from the server: 'Hello from the server! (92)'
+467913.109	ID:2	TX: Hello 93 from the client
+468054.352	ID:1	Server received: 'Hello 93 from the client'
+468158.822	ID:2	Response from the server: 'Hello from the server! (93)'
+472913.109	ID:2	TX: Hello 94 from the client
+473054.352	ID:1	Server received: 'Hello 94 from the client'
+473158.809	ID:2	Response from the server: 'Hello from the server! (94)'
+477913.109	ID:2	TX: Hello 95 from the client
+478054.581	ID:1	Server received: 'Hello 95 from the client'
+478158.939	ID:2	Response from the server: 'Hello from the server! (95)'
+480576.171	ID:2	 61446 P 0.18 15 681653 15042005 292643 265512 0 95922 38471 944178 15927 16277 0 5928 (radio 3.-219% / 3.27% tx 1.86% / 1.62% listen 1.68% / 1.65%)
+480721.986	ID:1	 61446 P 0.18 15 532466 15191711 213822 221135 0 98357 29518 953174 11186 13490 0 6162 (radio 2.-197% / 2.51% tx 1.35% / 1.13% listen 1.40% / 1.37%)
+482913.128	ID:2	TX: Hello 96 from the client
+483054.352	ID:1	Server received: 'Hello 96 from the client'
+483158.822	ID:2	Response from the server: 'Hello from the server! (96)'
+487913.109	ID:2	TX: Hello 97 from the client
+488054.352	ID:1	Server received: 'Hello 97 from the client'
+488158.809	ID:2	Response from the server: 'Hello from the server! (97)'
+492913.109	ID:2	TX: Hello 98 from the client
+493054.581	ID:1	Server received: 'Hello 98 from the client'
+493158.939	ID:2	Response from the server: 'Hello from the server! (98)'
+497913.109	ID:2	TX: Hello 99 from the client
+498054.352	ID:1	Server received: 'Hello 99 from the client'
+498158.822	ID:2	Response from the server: 'Hello from the server! (99)'
+502913.275	ID:2	TX: Hello 100 from the client
+503053.247	ID:1	Server received: 'Hello 100 from the client'
+503158.533	ID:2	Response from the server: 'Hello from the server! (100)'
+507913.275	ID:2	TX: Hello 101 from the client
+508053.259	ID:1	Server received: 'Hello 101 from the client'
+508158.926	ID:2	Response from the server: 'Hello from the server! (101)'
+510576.664	ID:2	 65286 P 0.18 16 724680 15981631 311136 281917 0 102001 43025 939626 18493 16405 0 6079 (radio 3.-203% / 3.55% tx 1.86% / 1.88% listen 1.68% / 1.66%)
+510722.404	ID:1	 65286 P 0.18 16 566709 16140164 227646 234829 0 104441 34240 948453 13824 13694 0 6084 (radio 2.-181% / 2.80% tx 1.36% / 1.40% listen 1.40% / 1.39%)
+512913.294	ID:2	TX: Hello 102 from the client
+513053.244	ID:1	Server received: 'Hello 102 from the client'
+513158.539	ID:2	Response from the server: 'Hello from the server! (102)'
+517913.275	ID:2	TX: Hello 103 from the client
+518053.244	ID:1	Server received: 'Hello 103 from the client'
+518158.531	ID:2	Response from the server: 'Hello from the server! (103)'
+522913.275	ID:2	TX: Hello 104 from the client
+523053.257	ID:1	Server received: 'Hello 104 from the client'
+523158.924	ID:2	Response from the server: 'Hello from the server! (104)'
+527913.275	ID:2	TX: Hello 105 from the client
+528053.244	ID:1	Server received: 'Hello 105 from the client'
+528158.539	ID:2	Response from the server: 'Hello from the server! (105)'
+532913.275	ID:2	TX: Hello 106 from the client
+533053.244	ID:1	Server received: 'Hello 106 from the client'
+533158.531	ID:2	Response from the server: 'Hello from the server! (106)'
+537913.275	ID:2	TX: Hello 107 from the client
+538053.257	ID:1	Server received: 'Hello 107 from the client'
+538158.924	ID:2	Response from the server: 'Hello from the server! (107)'
+540576.66	ID:2	 69126 P 0.18 17 762884 16926079 326992 297787 0 107929 38202 944448 15856 15870 0 5928 (radio 3.-190% / 3.22% tx 1.84% / 1.61% listen 1.68% / 1.61%)
+540722.43	ID:1	 69126 P 0.18 17 596471 17093089 238990 248277 0 110525 29759 952925 11344 13448 0 6084 (radio 2.-168% / 2.52% tx 1.35% / 1.15% listen 1.40% / 1.36%)
+542913.294	ID:2	TX: Hello 108 from the client
+543053.244	ID:1	Server received: 'Hello 108 from the client'
+543158.539	ID:2	Response from the server: 'Hello from the server! (108)'
+547913.275	ID:2	TX: Hello 109 from the client
+548053.244	ID:1	Server received: 'Hello 109 from the client'
+548158.531	ID:2	Response from the server: 'Hello from the server! (109)'
+552913.276	ID:2	TX: Hello 110 from the client
+553053.257	ID:1	Server received: 'Hello 110 from the client'
+553158.898	ID:2	Response from the server: 'Hello from the server! (110)'
+557913.276	ID:2	TX: Hello 111 from the client
+558053.244	ID:1	Server received: 'Hello 111 from the client'
+558158.539	ID:2	Response from the server: 'Hello from the server! (111)'
+562913.276	ID:2	TX: Hello 112 from the client
+563053.244	ID:1	Server received: 'Hello 112 from the client'
+563158.531	ID:2	Response from the server: 'Hello from the server! (112)'
+567913.276	ID:2	TX: Hello 113 from the client
+568053.257	ID:1	Server received: 'Hello 113 from the client'
+568158.898	ID:2	Response from the server: 'Hello from the server! (113)'
+570576.669	ID:2	 72966 P 0.18 18 805736 17865884 345438 313914 0 114008 42850 939805 18446 16127 0 6079 (radio 3.-177% / 3.51% tx 1.85% / 1.87% listen 1.68% / 1.64%)
+570722.423	ID:1	 72966 P 0.18 18 630877 18041376 252915 261938 0 116557 34403 948287 13925 13661 0 6032 (radio 2.-155% / 2.80% tx 1.35% / 1.41% listen 1.40% / 1.39%)
+572913.295	ID:2	TX: Hello 114 from the client
+573053.244	ID:1	Server received: 'Hello 114 from the client'
+573158.539	ID:2	Response from the server: 'Hello from the server! (114)'
+577913.276	ID:2	TX: Hello 115 from the client
+578053.244	ID:1	Server received: 'Hello 115 from the client'
+578158.531	ID:2	Response from the server: 'Hello from the server! (115)'
+582913.276	ID:2	TX: Hello 116 from the client
+583053.257	ID:1	Server received: 'Hello 116 from the client'
+583158.898	ID:2	Response from the server: 'Hello from the server! (116)'
+587913.276	ID:2	TX: Hello 117 from the client
+588053.244	ID:1	Server received: 'Hello 117 from the client'
+588158.539	ID:2	Response from the server: 'Hello from the server! (117)'
+592913.276	ID:2	TX: Hello 118 from the client
+593053.244	ID:1	Server received: 'Hello 118 from the client'
+593158.531	ID:2	Response from the server: 'Hello from the server! (118)'
+597913.276	ID:2	TX: Hello 119 from the client
+598053.257	ID:1	Server received: 'Hello 119 from the client'
+598158.898	ID:2	Response from the server: 'Hello from the server! (119)'
+600576.66	ID:2	 76806 P 0.18 19 843947 18810328 361295 329776 0 119936 38209 944444 15857 15862 0 5928 (radio 3.-167% / 3.22% tx 1.83% / 1.61% listen 1.67% / 1.61%)
+600722.431	ID:1	 76806 P 0.18 19 660644 18994299 264253 275384 0 122641 29764 952923 11338 13446 0 6084 (radio 2.-144% / 2.52% tx 1.34% / 1.15% listen 1.40% / 1.36%)
+602913.294	ID:2	TX: Hello 120 from the client
+603053.244	ID:1	Server received: 'Hello 120 from the client'
+603158.539	ID:2	Response from the server: 'Hello from the server! (120)'
+607913.275	ID:2	TX: Hello 121 from the client
+608053.244	ID:1	Server received: 'Hello 121 from the client'
+608158.531	ID:2	Response from the server: 'Hello from the server! (121)'
+612913.275	ID:2	TX: Hello 122 from the client
+613053.257	ID:1	Server received: 'Hello 122 from the client'
+613158.924	ID:2	Response from the server: 'Hello from the server! (122)'
+617913.275	ID:2	TX: Hello 123 from the client
+618053.244	ID:1	Server received: 'Hello 123 from the client'
+618158.539	ID:2	Response from the server: 'Hello from the server! (123)'
+622913.275	ID:2	TX: Hello 124 from the client
+623053.244	ID:1	Server received: 'Hello 124 from the client'
+623158.531	ID:2	Response from the server: 'Hello from the server! (124)'
+627913.275	ID:2	TX: Hello 125 from the client
+628053.257	ID:1	Server received: 'Hello 125 from the client'
+628158.924	ID:2	Response from the server: 'Hello from the server! (125)'
+630576.667	ID:2	 80646 P 0.18 20 886801 19750129 379741 345909 0 126015 42852 939801 18446 16133 0 6079 (radio 3.-157% / 3.51% tx 1.84% / 1.87% listen 1.67% / 1.64%)
+630722.414	ID:1	 80646 P 0.18 20 695054 19942580 278183 289049 0 128673 34407 948281 13930 13665 0 6032 (radio 2.-134% / 2.80% tx 1.34% / 1.41% listen 1.40% / 1.39%)
+632913.294	ID:2	TX: Hello 126 from the client
+633053.244	ID:1	Server received: 'Hello 126 from the client'
+633158.539	ID:2	Response from the server: 'Hello from the server! (126)'
+637913.275	ID:2	TX: Hello 127 from the client
+638053.244	ID:1	Server received: 'Hello 127 from the client'
+638158.531	ID:2	Response from the server: 'Hello from the server! (127)'
+642913.275	ID:2	TX: Hello 128 from the client
+643053.257	ID:1	Server received: 'Hello 128 from the client'
+643158.924	ID:2	Response from the server: 'Hello from the server! (128)'
+647913.275	ID:2	TX: Hello 129 from the client
+648053.244	ID:1	Server received: 'Hello 129 from the client'
+648158.539	ID:2	Response from the server: 'Hello from the server! (129)'
+652913.276	ID:2	TX: Hello 130 from the client
+653053.244	ID:1	Server received: 'Hello 130 from the client'
+653158.531	ID:2	Response from the server: 'Hello from the server! (130)'
+657913.276	ID:2	TX: Hello 131 from the client
+658053.257	ID:1	Server received: 'Hello 131 from the client'
+658158.898	ID:2	Response from the server: 'Hello from the server! (131)'
+660576.658	ID:2	 84486 P 0.18 21 925015 20694569 395597 361776 0 131943 38212 944440 15856 15867 0 5928 (radio 3.-149% / 3.22% tx 1.82% / 1.61% listen 1.67% / 1.61%)
+660722.42	ID:1	 84486 P 0.18 21 724825 20895498 289525 302493 0 134757 29768 952918 11342 13444 0 6084 (radio 2.-125% / 2.52% tx 1.33% / 1.15% listen 1.39% / 1.36%)
+662913.295	ID:2	TX: Hello 132 from the client
+663053.244	ID:1	Server received: 'Hello 132 from the client'
+663158.539	ID:2	Response from the server: 'Hello from the server! (132)'
+667913.276	ID:2	TX: Hello 133 from the client
+668053.244	ID:1	Server received: 'Hello 133 from the client'
+668158.531	ID:2	Response from the server: 'Hello from the server! (133)'
+672913.276	ID:2	TX: Hello 134 from the client
+673053.257	ID:1	Server received: 'Hello 134 from the client'
+673158.898	ID:2	Response from the server: 'Hello from the server! (134)'
+677913.276	ID:2	TX: Hello 135 from the client
+678053.244	ID:1	Server received: 'Hello 135 from the client'
+678158.539	ID:2	Response from the server: 'Hello from the server! (135)'
+682913.276	ID:2	TX: Hello 136 from the client
+683053.244	ID:1	Server received: 'Hello 136 from the client'
+683158.531	ID:2	Response from the server: 'Hello from the server! (136)'
+687913.276	ID:2	TX: Hello 137 from the client
+688053.257	ID:1	Server received: 'Hello 137 from the client'
+688158.898	ID:2	Response from the server: 'Hello from the server! (137)'
+690576.652	ID:2	 88326 P 0.18 22 967875 21634366 414044 377901 0 138022 42858 939797 18447 16125 0 6079 (radio 3.-140% / 3.51% tx 1.83% / 1.87% listen 1.67% / 1.64%)
+690722.452	ID:1	 88326 P 0.18 22 759239 21843777 303449 316156 0 140789 34411 948279 13924 13663 0 6032 (radio 2.-116% / 2.80% tx 1.34% / 1.41% listen 1.39% / 1.39%)
+692913.295	ID:2	TX: Hello 138 from the client
+693053.244	ID:1	Server received: 'Hello 138 from the client'
+693158.539	ID:2	Response from the server: 'Hello from the server! (138)'
+697913.276	ID:2	TX: Hello 139 from the client
+698053.244	ID:1	Server received: 'Hello 139 from the client'
+698158.531	ID:2	Response from the server: 'Hello from the server! (139)'
+702913.276	ID:2	TX: Hello 140 from the client
+703053.257	ID:1	Server received: 'Hello 140 from the client'
+703158.898	ID:2	Response from the server: 'Hello from the server! (140)'
+707913.276	ID:2	TX: Hello 141 from the client
+708053.244	ID:1	Server received: 'Hello 141 from the client'
+708158.539	ID:2	Response from the server: 'Hello from the server! (141)'
+712913.276	ID:2	TX: Hello 142 from the client
+713053.244	ID:1	Server received: 'Hello 142 from the client'
+713158.531	ID:2	Response from the server: 'Hello from the server! (142)'
+717913.276	ID:2	TX: Hello 143 from the client
+718053.257	ID:1	Server received: 'Hello 143 from the client'
+718158.898	ID:2	Response from the server: 'Hello from the server! (143)'
+720577.186	ID:2	 92166 P 0.18 23 1006093 22578803 429901 393763 0 143950 38216 944437 15857 15862 0 5928 (radio 3.-133% / 3.22% tx 1.-100% / 1.61% listen 1.66% / 1.61%)
+720722.435	ID:1	 92166 P 0.18 23 789015 22796691 314787 329602 0 146873 29773 952914 11338 13446 0 6084 (radio 2.-109% / 2.52% tx 1.33% / 1.15% listen 1.39% / 1.36%)
+722913.295	ID:2	TX: Hello 144 from the client
+723053.244	ID:1	Server received: 'Hello 144 from the client'
+723158.539	ID:2	Response from the server: 'Hello from the server! (144)'
+727913.276	ID:2	TX: Hello 145 from the client
+728053.244	ID:1	Server received: 'Hello 145 from the client'
+728158.531	ID:2	Response from the server: 'Hello from the server! (145)'
+732913.276	ID:2	TX: Hello 146 from the client
+733053.257	ID:1	Server received: 'Hello 146 from the client'
+733158.898	ID:2	Response from the server: 'Hello from the server! (146)'
+737913.276	ID:2	TX: Hello 147 from the client
+738053.244	ID:1	Server received: 'Hello 147 from the client'
+738158.539	ID:2	Response from the server: 'Hello from the server! (147)'
+742913.276	ID:2	TX: Hello 148 from the client
+743053.244	ID:1	Server received: 'Hello 148 from the client'
+743158.531	ID:2	Response from the server: 'Hello from the server! (148)'
+747913.276	ID:2	TX: Hello 149 from the client
+748053.257	ID:1	Server received: 'Hello 149 from the client'
+748158.898	ID:2	Response from the server: 'Hello from the server! (149)'
+750577.017	ID:2	 96006 P 0.18 24 1048975 23518579 448348 409888 0 150029 42880 939776 18447 16125 0 6079 (radio 3.-126% / 3.51% tx 1.-93% / 1.87% listen 1.66% / 1.64%)
+750722.43	ID:1	 96006 P 0.18 24 823433 23744965 328711 343265 0 152905 34415 948274 13924 13663 0 6032 (radio 2.-102% / 2.80% tx 1.33% / 1.41% listen 1.39% / 1.39%)
+752913.296	ID:2	TX: Hello 150 from the client
+753053.244	ID:1	Server received: 'Hello 150 from the client'
+753158.539	ID:2	Response from the server: 'Hello from the server! (150)'
+757913.277	ID:2	TX: Hello 151 from the client
+758053.244	ID:1	Server received: 'Hello 151 from the client'
+758158.531	ID:2	Response from the server: 'Hello from the server! (151)'
+762913.277	ID:2	TX: Hello 152 from the client
+763053.257	ID:1	Server received: 'Hello 152 from the client'
+763158.924	ID:2	Response from the server: 'Hello from the server! (152)'
+767913.277	ID:2	TX: Hello 153 from the client
+768053.244	ID:1	Server received: 'Hello 153 from the client'
+768158.539	ID:2	Response from the server: 'Hello from the server! (153)'
+772913.277	ID:2	TX: Hello 154 from the client
+773053.244	ID:1	Server received: 'Hello 154 from the client'
+773158.531	ID:2	Response from the server: 'Hello from the server! (154)'
+777913.277	ID:2	TX: Hello 155 from the client
+778053.257	ID:1	Server received: 'Hello 155 from the client'
+778158.924	ID:2	Response from the server: 'Hello from the server! (155)'
+780577.04	ID:2	 99846 P 0.18 25 1087207 24463000 464204 425744 0 155957 38230 944421 15856 15856 0 5928 (radio 3.-288% / 3.22% tx 1.-87% / 1.61% listen 1.66% / 1.61%)
+780722.284	ID:1	 99846 P 0.18 25 853212 24697874 340053 356713 0 158989 29776 952909 11342 13448 0 6084 (radio 2.-96% / 2.52% tx 1.33% / 1.15% listen 1.39% / 1.36%)
+782913.296	ID:2	TX: Hello 156 from the client
+783053.244	ID:1	Server received: 'Hello 156 from the client'
+783158.539	ID:2	Response from the server: 'Hello from the server! (156)'
+787913.277	ID:2	TX: Hello 157 from the client
+788053.244	ID:1	Server received: 'Hello 157 from the client'
+788158.531	ID:2	Response from the server: 'Hello from the server! (157)'
+792913.277	ID:2	TX: Hello 158 from the client
+793053.257	ID:1	Server received: 'Hello 158 from the client'
+793158.924	ID:2	Response from the server: 'Hello from the server! (158)'
+797913.277	ID:2	TX: Hello 159 from the client
+798053.244	ID:1	Server received: 'Hello 159 from the client'
+798158.539	ID:2	Response from the server: 'Hello from the server! (159)'
+802913.274	ID:2	TX: Hello 160 from the client
+803053.244	ID:1	Server received: 'Hello 160 from the client'
+803158.531	ID:2	Response from the server: 'Hello from the server! (160)'
+807913.274	ID:2	TX: Hello 161 from the client
+808053.257	ID:1	Server received: 'Hello 161 from the client'
+808158.898	ID:2	Response from the server: 'Hello from the server! (161)'
+810577.548	ID:2	 103686 P 0.18 26 1130087 25402777 482650 441867 0 162036 42878 939777 18446 16123 0 6079 (radio 3.-276% / 3.51% tx 1.-80% / 1.87% listen 1.-96% / 1.64%)
+810722.665	ID:1	 103686 P 0.18 26 887629 25646148 353979 370375 0 165021 34414 948274 13926 13662 0 6032 (radio 2.-89% / 2.80% tx 1.33% / 1.41% listen 1.39% / 1.39%)
+812913.293	ID:2	TX: Hello 162 from the client
+813053.244	ID:1	Server received: 'Hello 162 from the client'
+813158.539	ID:2	Response from the server: 'Hello from the server! (162)'
+817913.274	ID:2	TX: Hello 163 from the client
+818053.244	ID:1	Server received: 'Hello 163 from the client'
+818158.531	ID:2	Response from the server: 'Hello from the server! (163)'
+822913.274	ID:2	TX: Hello 164 from the client
+823053.257	ID:1	Server received: 'Hello 164 from the client'
+823158.898	ID:2	Response from the server: 'Hello from the server! (164)'
+827913.274	ID:2	TX: Hello 165 from the client
+828053.244	ID:1	Server received: 'Hello 165 from the client'
+828158.539	ID:2	Response from the server: 'Hello from the server! (165)'
+832913.274	ID:2	TX: Hello 166 from the client
+833053.244	ID:1	Server received: 'Hello 166 from the client'
+833158.531	ID:2	Response from the server: 'Hello from the server! (166)'
+837913.274	ID:2	TX: Hello 167 from the client
+838053.257	ID:1	Server received: 'Hello 167 from the client'
+838158.898	ID:2	Response from the server: 'Hello from the server! (167)'
+840577.554	ID:2	 107526 P 0.18 27 1168342 26347176 498506 457734 0 167964 38253 944399 15856 15867 0 5928 (radio 3.-265% / 3.22% tx 1.-75% / 1.61% listen 1.-90% / 1.61%)
+840722.668	ID:1	 107526 P 0.18 27 917420 26599047 365317 383817 0 171105 29788 952899 11338 13442 0 6084 (radio 2.-84% / 2.52% tx 1.32% / 1.15% listen 1.39% / 1.36%)
+842913.293	ID:2	TX: Hello 168 from the client
+843053.244	ID:1	Server received: 'Hello 168 from the client'
+843158.539	ID:2	Response from the server: 'Hello from the server! (168)'
+847913.274	ID:2	TX: Hello 169 from the client
+848053.244	ID:1	Server received: 'Hello 169 from the client'
+848158.531	ID:2	Response from the server: 'Hello from the server! (169)'
+852913.275	ID:2	TX: Hello 170 from the client
+853053.257	ID:1	Server received: 'Hello 170 from the client'
+853158.924	ID:2	Response from the server: 'Hello from the server! (170)'
+857913.275	ID:2	TX: Hello 171 from the client
+858053.244	ID:1	Server received: 'Hello 171 from the client'
+858158.539	ID:2	Response from the server: 'Hello from the server! (171)'
+862913.275	ID:2	TX: Hello 172 from the client
+863053.244	ID:1	Server received: 'Hello 172 from the client'
+863158.531	ID:2	Response from the server: 'Hello from the server! (172)'
+867913.275	ID:2	TX: Hello 173 from the client
+868053.257	ID:1	Server received: 'Hello 173 from the client'
+868158.924	ID:2	Response from the server: 'Hello from the server! (173)'
+870577.568	ID:2	 111366 P 0.18 28 1211242 27286932 516952 473864 0 174043 42898 939756 18446 16130 0 6079 (radio 3.-254% / 3.51% tx 1.-70% / 1.87% listen 1.-85% / 1.64%)
+870722.673	ID:1	 111366 P 0.18 28 951854 27547304 379246 397482 0 177137 34431 948257 13929 13665 0 6032 (radio 2.-79% / 2.80% tx 1.33% / 1.41% listen 1.39% / 1.39%)
+872913.294	ID:2	TX: Hello 174 from the client
+873053.244	ID:1	Server received: 'Hello 174 from the client'
+873158.539	ID:2	Response from the server: 'Hello from the server! (174)'
+877913.275	ID:2	TX: Hello 175 from the client
+878053.244	ID:1	Server received: 'Hello 175 from the client'
+878158.531	ID:2	Response from the server: 'Hello from the server! (175)'
+882913.275	ID:2	TX: Hello 176 from the client
+883053.257	ID:1	Server received: 'Hello 176 from the client'
+883158.924	ID:2	Response from the server: 'Hello from the server! (176)'
+887913.275	ID:2	TX: Hello 177 from the client
+888053.244	ID:1	Server received: 'Hello 177 from the client'
+888158.539	ID:2	Response from the server: 'Hello from the server! (177)'
+892913.275	ID:2	TX: Hello 178 from the client
+893053.244	ID:1	Server received: 'Hello 178 from the client'
+893158.531	ID:2	Response from the server: 'Hello from the server! (178)'
+897913.275	ID:2	TX: Hello 179 from the client
+898053.257	ID:1	Server received: 'Hello 179 from the client'
+898158.924	ID:2	Response from the server: 'Hello from the server! (179)'
+TEST OK
+Test ended at simulation time: 900000000

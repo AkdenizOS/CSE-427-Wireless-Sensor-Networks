@@ -26,6 +26,12 @@ not get full attendance credit. The video must:
 
 No additional document or written report is required.
 
+**Lab submissions inside the midterm.** The week 3 lab submission is worth 20 points and
+the week 4 lab submission 15 points plus a 5-point bonus, all counted toward the midterm.
+Late submissions are not accepted: points not earned this way have to be made up on the
+midterm paper, and a missing submission also costs that week's lab attendance unless you
+were present in class.
+
 Attendance in week 1 is not mandatory. Get any work or internship permissions before
 Monday, **September 21** — regular attendance applies from that date.
 

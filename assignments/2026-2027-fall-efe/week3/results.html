@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 3 Energy Results</title>
+<style>
+  :root { --bg:#fff; --fg:#1d1d1f; --mut:#666; --line:#ddd; --hi:#fff4d6; --code:#f5f5f7; }
+  body { background:var(--bg); color:var(--fg); font:16px/1.45 -apple-system, "Segoe UI", Roboto, sans-serif; margin:0 auto; max-width:1180px; padding:24px 16px 60px; }
+  h1 { font-size:26px; margin:0 0 4px; } h2 { font-size:20px; margin:34px 0 10px; border-bottom:2px solid var(--fg); padding-bottom:4px; }
+  .sub { color:var(--mut); margin:0 0 18px; }
+  table { border-collapse:collapse; width:100%; font-variant-numeric:tabular-nums; }
+  th, td { border:1px solid var(--line); padding:6px 9px; text-align:right; } th { background:#f0f0f2; }
+  td:first-child, th:first-child, td:nth-child(2) { text-align:left; }
+  tr.a td { background:#fdecea; } .hi { background:var(--hi) !important; font-weight:600; }
+  pre { background:var(--code); padding:10px 12px; overflow-x:auto; font-size:12.5px; line-height:1.5; border-radius:6px; }
+  img { width:100%; height:auto; border:1px solid var(--line); }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; } @media (max-width:800px){ .grid{grid-template-columns:1fr;} }
+  .box { border:1px solid var(--line); border-radius:6px; padding:10px 14px; }
+  code { background:var(--code); padding:1px 4px; border-radius:3px; }
+</style>
+</head>
+<body>
+<h1>CSE 427 · Week 3 — Energy Accounting Lab</h1>
+<p class="sub">Efe Kuruçay · Instant Contiki 3.0 · Cooja · Sky motes · Powertrace every 30 s</p>
+
+<h2>1 · Setup (same in every scenario)</h2>
+<div class="grid">
+<div class="box">
+<b>Topology:</b> mote 1 = UDP server at (0, 0) · mote 2 = UDP client at (10, 0)<br>
+<b>Radio medium:</b> UDGM, range 50 m, TX/RX success 1.0<br>
+<b>Duration:</b> 15 simulated minutes, same seed (123456)<br>
+<b>Stack:</b> IPv6 + CSMA; only the RDC line and the send interval change<br>
+<b>Averaging window:</b> first 2 Powertrace intervals (60 s) skipped as warm-up → 27 intervals
+</div>
+<div class="box">
+<table>
+<tr><th>Scenario</th><th>RDC (Makefile)</th><th>SEND_INTERVAL</th></tr>
+<tr><td>A</td><td>nullrdc_driver</td><td>15 s</td></tr>
+<tr><td>B</td><td>contikimac_driver</td><td>15 s</td></tr>
+<tr><td>C</td><td>contikimac_driver</td><td>5 s</td></tr>
+</table>
+</div>
+</div>
+
+<h2>2 · Completed measurement table</h2>
+<table>
+<tr><th>Scenario</th><th>Mote</th><th>CPU %</th><th>LPM %</th><th>TX %</th><th>Listen %</th><th>Radio on %</th><th>I<sub>avg</sub> (mA)</th><th>Lifetime (2500 mAh)</th><th>PDR</th></tr>
+<tr class="a"><td>A · NullRDC, 15 s</td><td>1 server</td><td>0.99</td><td>99.01</td><td>0.02</td><td class="hi">100.0</td><td class="hi">100.0</td><td>18.878</td><td>132 h = 5.5 days</td><td rowspan="2">59 / 59 = 1.00</td></tr>
+<tr class="a"><td></td><td>2 client</td><td>1.08</td><td>98.92</td><td>0.02</td><td class="hi">100.0</td><td class="hi">100.0</td><td>18.881</td><td>132 h = 5.5 days</td></tr>
+<tr><td>B · ContikiMAC, 15 s</td><td>1 server</td><td>1.84</td><td>98.16</td><td>0.52</td><td>0.89</td><td>1.41</td><td>0.344</td><td>7259 h = 302 days</td><td rowspan="2">59 / 59 = 1.00</td></tr>
+<tr><td></td><td>2 client</td><td>2.19</td><td>97.81</td><td>0.68</td><td>0.99</td><td>1.66</td><td>0.396</td><td>6310 h = 263 days</td></tr>
+<tr><td>C · ContikiMAC, 5 s</td><td>1 server</td><td>3.26</td><td>96.74</td><td>1.28</td><td>1.38</td><td>2.66</td><td>0.594</td><td>4208 h = 175 days</td><td rowspan="2">179 / 179 = 1.00</td></tr>
+<tr><td></td><td>2 client</td><td>4.15</td><td>95.85</td><td>1.75</td><td>1.65</td><td>3.41</td><td>0.743</td><td>3367 h = 140 days</td></tr>
+</table>
+<p class="sub">Duty cycle = CPU %. Listen in A prints as 100.02 % because Energest's radio and CPU counters are sampled a few ticks apart; it means "always on".</p>
+
+<h2>3 · Graph</h2>
+<img src="energy-graph.png" width="1950" height="780" alt="Radio TX and listen percentages and average current for scenarios A, B and C">
+
+<h2>4 · Formulas and current model</h2>
+<div class="grid">
+<div class="box">
+Powertrace counters are cumulative, so every row uses the difference of two consecutive lines:<br>
+ΔCPU = CPU<sub>t</sub> − CPU<sub>t−1</sub> (same for LPM, TX, RX)<br>
+CPU duty cycle = ΔCPU / (ΔCPU + ΔLPM) × 100<br>
+TX % = ΔTX / ΔT × 100 · Listen % = ΔRX / ΔT × 100<br>
+Radio on % = (ΔTX + ΔRX) / ΔT × 100, with ΔT = ΔCPU + ΔLPM
+</div>
+<div class="box">
+I<sub>avg</sub> = Σ D<sub>i</sub> × I<sub>i</sub><br>
+CPU 1.8 mA · LPM 0.0545 mA · TX 17.4 mA · Listen 18.8 mA<br>
+Lifetime (h) = 2500 mAh / I<sub>avg</sub><br><br>
+<b>Worked example — B, mote 1, t = 150 s → 180 s:</b><br>
+ΔCPU = 130968 − 115327 = 15641 · ΔLPM = 5766220 − 4799171 = 967049<br>
+ΔTX = 44361 − 40631 = 3730 · ΔRX = 56301 − 47651 = 8650 · ΔT = 982690<br>
+CPU 1.59 % · TX 0.38 % · Listen 0.88 % · Radio on 1.26 %
+</div>
+</div>
+
+<h2>5 · Powertrace log excerpts</h2>
+<p class="sub">Fields after <code>P</code>: address, sequence, <b>all_cpu all_lpm all_transmit all_listen</b>, all_idle_transmit, all_idle_listen, then the same six for the last interval.</p>
+<b>A — NullRDC, 15 s</b>
+<pre>2	nullsec CSMA nullrdc, channel check rate 128 Hz, radio channel 26
+150718.705	ID:1	 19206 P 0.18 4 49571 4864966 1248 4914628 0 0 9798 972897 189 982844 0 0
+180718.725	ID:1	 23046 P 0.18 5 59140 5838093 1376 5897539 0 0 9566 973127 128 982907 0 0
+	ID:2	TX: Hello 5 from the client
+	ID:1	Server received: 'Hello 5 from the client'</pre>
+<b>B — ContikiMAC, 15 s</b>
+<pre>2	nullsec CSMA ContikiMAC, channel check rate 8 Hz, radio channel 26
+150719.743	ID:1	 19206 P 0.18 4 115327 4799171 40631 47651 0 31095 20376 962311 6364 8929 0 6136
+180719.72	ID:1	 23046 P 0.18 5 130968 5766220 44361 56301 0 37309 15638 967049 3730 8650 0 6214
+	ID:2	TX: Hello 5 from the client
+	ID:1	Server received: 'Hello 5 from the client'</pre>
+<b>C — ContikiMAC, 5 s</b>
+<pre>2	nullsec CSMA ContikiMAC, channel check rate 8 Hz, radio channel 26
+150720.409	ID:1	 19206 P 0.18 4 184829 4729736 77898 71758 0 30835 34088 948593 13766 13689 0 6110
+180720.528	ID:1	 23046 P 0.18 5 214286 5682975 89084 85248 0 36997 29454 953239 11186 13490 0 6162
+	ID:2	TX: Hello 5 from the client
+	ID:1	Server received: 'Hello 5 from the client'</pre>
+
+<h2>6 · Interpretation and limitations</h2>
+<div class="grid">
+<div class="box">
+<b>Dominant state:</b> radio listening. In A it is 99.6 % of the average current (18.8 of 18.88 mA) even though the radio transmits only 0.02 % of the time.<br>
+<b>Duty cycling (A → B):</b> listen 100 % → 0.9 %, current ÷ 55, lifetime 5.5 → ~300 days, PDR unchanged.<br>
+<b>Higher traffic (B → C):</b> 3× packets → TX ×2.5, listen ×1.6, CPU ×1.8; current +73 % (server), lifetime 302 → 175 days.<br>
+<b>Role:</b> the client pays more in B and C — ContikiMAC repeats each frame until the receiver wakes up.
+</div>
+<div class="box">
+<b>Limitations:</b><br>
+• Simulated radio (UDGM, no interference, no loss), two motes, one hop.<br>
+• Datasheet-style constant currents; no voltage drop, no battery self-discharge or temperature.<br>
+• Energest counts state time, not real power; sensors and LEDs are not counted.<br>
+• 15 minutes of steady-state traffic extrapolated to months.<br>
+• Contiki 3.0 Sky disables IPv6 neighbour discovery (RPL is expected), so both motes add each other to the neighbour table in code.
+</div>
+</div>
+</body>
+</html>

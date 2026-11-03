@@ -1,0 +1,1408 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Duty-Cycle MAC Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: instrument bench — sensor field + logic-analyzer timeline on the left, control rack (protocol, counters, log, params) on the right; stacks on phones */
+:root {
+  --bg: #E5EAE8; --panel: #F6F8F7; --field: #EFF3F1; --ink: #15222A; --muted: #56676E; --line: #C3CECB; --grid: #D2DBD8;
+  --pre: #7650CF; --data: #1C6BD0; --ack: #0D8F7C; --beacon: #C27A0A; --bad: #CF323A; --listen: #A4C4B7; --rx: #3B9172;
+  --node-fill: #15222A; --node-text: #F6F8F7; --chip: #E9EEEC;
+  --f-ui: "Barlow Semi Condensed", "Arial Narrow", "Roboto Condensed", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --r: 6px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0D1316; --panel: #141C20; --field: #10181C; --ink: #E0E9EB; --muted: #8B9CA2; --line: #2A373D; --grid: #1D292E;
+  --pre: #A487F3; --data: #4E93F0; --ack: #2CBFA8; --beacon: #E8A63A; --bad: #EF5359; --listen: #3B6657; --rx: #5BB892;
+  --node-fill: #E0E9EB; --node-text: #10181C; --chip: #1A2429; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0D1316; --panel: #141C20; --field: #10181C; --ink: #E0E9EB; --muted: #8B9CA2; --line: #2A373D; --grid: #1D292E;
+  --pre: #A487F3; --data: #4E93F0; --ack: #2CBFA8; --beacon: #E8A63A; --bad: #EF5359; --listen: #3B6657; --rx: #5BB892;
+  --node-fill: #E0E9EB; --node-text: #10181C; --chip: #1A2429; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-ui); font-size: 15px; line-height: 1.45; }
+.app { max-width: 1480px; margin: 0 auto; padding-inline: 16px; padding-block: 14px 40px; display: flex; flex-direction: column; gap: 12px; }
+.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; border: 1px solid var(--line); background: var(--panel); border-radius: var(--r); padding: 6px 12px; font-weight: 600; line-height: 1.2; }
+button:hover:not(:disabled) { border-color: var(--muted); }
+button:disabled { cursor: default; opacity: .6; }
+button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--data); outline-offset: 2px; }
+button.primary { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+button.ghost { background: transparent; }
+button.sm { padding: 3px 9px; font-size: 13px; }
+button.danger { color: var(--bad); }
+select { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 5px 8px; max-width: 100%; }
+
+/* header */
+.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; }
+.brand h1 { font-size: clamp(26px, 3.4vw, 38px); font-weight: 700; letter-spacing: -.01em; line-height: 1; text-transform: uppercase; }
+.brand .sub { margin: 6px 0 0; font-family: var(--f-mono); font-size: 12px; color: var(--muted); letter-spacing: .02em; }
+.protos { display: flex; flex-wrap: wrap; gap: 0; border: 1.5px solid var(--ink); border-radius: var(--r); overflow: hidden; }
+.protos button { border: 0; border-radius: 0; border-right: 1.5px solid var(--ink); background: transparent; padding: 8px 16px; font-size: 16px; font-weight: 700; letter-spacing: .02em; }
+.protos button:last-child { border-right: 0; }
+.protos button.on { background: var(--ink); color: var(--panel); }
+
+.transport { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.transport .play { min-width: 76px; }
+.inline { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 14px; color: var(--muted); }
+.inline select { color: var(--ink); font-weight: 500; }
+.clock { margin-left: auto; font-size: 15px; font-weight: 600; padding: 5px 10px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); }
+
+/* layout */
+.layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (min-width: 1100px) { .layout { grid-template-columns: minmax(0, 1fr) 400px; } }
+@media (max-width: 1099px) {
+  .layout { display: flex; flex-direction: column; gap: 12px; }
+  .bench { display: contents; }
+  .rack { order: 2; } .compare { order: 3; } .model { order: 4; }
+}
+.bench, .rack { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; min-width: 0; }
+.card-h { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.card-h h2 { font-size: 17px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; margin-right: auto; }
+.card-h h2:has(+ .tag) { margin-right: 0; }
+.card-h .tag { margin-right: auto; }
+.tag { font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); }
+.ref { font-size: 13px; color: var(--muted); width: 100%; }
+.note { margin: 0 0 8px; color: var(--muted); font-size: 14px; max-width: 75ch; }
+
+/* field */
+.fieldbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--panel); }
+.seg button { border: 0; border-radius: 0; border-right: 1px solid var(--line); background: transparent; padding: 5px 11px; font-size: 14px; }
+.seg button:last-child { border-right: 0; }
+.seg button.on { background: var(--ink); color: var(--panel); }
+.check { display: inline-flex; align-items: flex-start; gap: 7px; font-size: 14px; cursor: pointer; }
+.check input { margin-top: 3px; accent-color: var(--ink); }
+.field-wrap { position: relative; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--field); }
+canvas.field { display: block; width: 100%; aspect-ratio: 1000 / 620; max-width: 100%; touch-action: none; cursor: default; }
+.tool-add-sender canvas, .tool-add-receiver canvas, .tool-add-idle canvas { cursor: crosshair; }
+.tool-delete canvas { cursor: not-allowed; }
+.empty { position: absolute; inset: 0; margin: auto; height: max-content; text-align: center; color: var(--muted); pointer-events: none; padding: 16px; }
+.legend-field { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-size: 13px; color: var(--muted); }
+.legend-field .sep { width: 1px; height: 14px; background: var(--line); }
+.sh { display: inline-block; width: 12px; height: 12px; background: var(--node-fill); vertical-align: -1px; margin-right: -4px; }
+.sh.ci { border-radius: 50%; } .sh.sq { border-radius: 2px; } .sh.id { border-radius: 50%; background: var(--panel); border: 1.5px solid var(--ink); }
+.ring { display: inline-block; width: 13px; height: 13px; border-radius: 50%; border: 3px solid var(--listen); margin-right: -4px; vertical-align: -2px; }
+.r-sleep { border: 1.5px dashed var(--line); } .r-rx { border-color: var(--rx); } .r-bad { border-color: var(--bad); }
+
+/* timeline */
+canvas.timeline { display: block; width: 100%; height: 120px; }
+.legend { margin: 8px 0 0; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { display: inline-block; width: 16px; height: 11px; border-radius: 1px; }
+
+/* compare */
+.tbl-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { padding: 6px 9px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+thead th { font-weight: 600; color: var(--muted); font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; vertical-align: bottom; white-space: normal; min-width: 76px; }
+tbody th { text-align: left; font-weight: 700; }
+thead th:first-child { text-align: left; }
+td.best { font-weight: 700; box-shadow: inset 0 -2px 0 var(--ack); }
+
+.model summary, .params summary { cursor: pointer; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; font-size: 15px; }
+.model ul { margin: 10px 0 0; padding-left: 18px; color: var(--muted); font-size: 14px; display: grid; gap: 6px; max-width: 90ch; }
+
+/* rack */
+.proto p { margin: 0 0 10px; font-size: 14.5px; }
+.proto h3 { font-size: 12.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 4px; }
+.proto ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 14px; }
+
+.counters { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; padding: 0; overflow: hidden; background: var(--line); }
+.ctr { display: grid; grid-template-rows: auto auto auto; text-align: left; gap: 1px; border: 0; border-radius: 0; background: var(--panel); padding: 9px 12px 9px 14px; position: relative; font-weight: 400; }
+.ctr::before { content: ""; position: absolute; left: 0; top: 9px; bottom: 9px; width: 3px; background: var(--c); }
+.ctr:disabled { opacity: 1; }
+.ctr.on { background: var(--chip); }
+.ctr-l { font-size: 12.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.ctr-v { font-size: 19px; font-weight: 600; }
+.ctr-s { font-size: 12.5px; color: var(--muted); }
+
+.insp-grid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 10px; align-items: center; font-size: 14px; margin-bottom: 10px; }
+.insp-grid label, .insp-grid .k { color: var(--muted); font-weight: 600; }
+.insp-grid .num { font-size: 12.5px; }
+.mini { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; margin: 0 0 10px; }
+.mini div { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dotted var(--line); padding-bottom: 3px; }
+.mini dt { color: var(--muted); font-size: 13px; } .mini dd { margin: 0; font-size: 12.5px; font-weight: 600; }
+.row-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.chip { font-size: 12.5px; padding: 3px 8px; border-radius: 999px; font-weight: 600; background: transparent; color: var(--muted); display: inline-flex; gap: 5px; align-items: center; }
+.chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--c); }
+.chip.on { color: var(--ink); border-color: var(--c); }
+.chip.on::before { background: var(--c); }
+.chip .num { font-size: 11px; font-weight: 500; color: var(--muted); }
+.entries { list-style: none; margin: 0; padding: 0; max-height: 460px; overflow-y: auto; border-top: 1px solid var(--line); }
+.entries li { border-bottom: 1px solid var(--line); }
+.entries li.none { padding: 12px 4px; color: var(--muted); font-size: 14px; }
+.entries button { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 1px 8px; width: 100%; padding: 6px 4px 6px 10px; cursor: pointer; position: relative; }
+.entries button::before { content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 3px; background: var(--c); }
+.entries button:hover { background: var(--chip); }
+.entries button:focus-visible { outline: 2px solid var(--data); outline-offset: -2px; }
+.when { font-size: 11.5px; color: var(--muted); padding-top: 2px; }
+.cat { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--c); }
+.msg { grid-column: 2; font-size: 14px; line-height: 1.35; overflow-wrap: anywhere; }
+
+.params-body { display: grid; gap: 12px; margin-top: 10px; }
+.slider { display: grid; gap: 3px; }
+.sl-top { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; font-size: 14px; }
+.sl-top b { font-size: 13px; }
+.slider input { width: 100%; accent-color: var(--ink); }
+.hint { font-size: 12.5px; color: var(--muted); }
+
+@media (max-width: 560px) {
+  .protos { width: 100%; } .protos button { flex: 1 1 auto; padding: 8px 8px; font-size: 14px; }
+  .clock { margin-left: 0; }
+  .counters, .mini { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+<script>
+// ===================== Channel + MAC engine (1 tick = 1 ms) =====================
+const DUR = { DATA: 4, ACK: 1, STROBE: 1, EACK: 1, BEACON: 1, PROBE: 1, HACK: 1 };
+const OE_KINDS = new Set(['PRE', 'STROBE', 'DATA']);
+const KIND_LABEL = { PRE: 'preamble+DATA', STROBE: 'strobe', EACK: 'early ACK', DATA: 'DATA', ACK: 'ACK', BEACON: 'beacon', PROBE: 'probe', HACK: 'auto-ACK' };
+const KIND_SHORT = { PRE: 'PRE', STROBE: 'STB', EACK: 'EACK', DATA: 'DATA', ACK: 'ACK', BEACON: 'BCN', PROBE: 'PRB', HACK: 'HACK' };
+const HIST = 2048;
+// CC2420 currents (mA) at 3 V
+const CUR = { tx: 17.4, rx: 18.8, sleep: 0.02 };
+const VOLT = 3;
+
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const ri = (s, n) => Math.floor(s.rand() * Math.max(1, n));
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+const nodeEnergy = (n) => VOLT * (CUR.tx * n.E.tx + CUR.rx * (n.E.rx + n.E.idle) + CUR.sleep * n.E.sleep) / 1000; // mJ
+
+class Sim {
+  constructor(protoKey, topo, cfg, seed) {
+    this.protoKey = protoKey;
+    this.P = PROTOS[protoKey];
+    this.cfg = Object.assign({}, cfg);
+    this.seed = seed || 1;
+    this.rand = mulberry32(this.seed);
+    this.t = 0; this.air = []; this.txSeq = 0;
+    this.logs = []; this.logSeq = 0; this.marks = [];
+    this.headless = false; this.onLog = null;
+    this.C = { gen: 0, delivered: 0, dropped: 0, collisions: 0, hidden: 0, exposed: 0, defers: 0,
+      overhear: 0, overhearMs: 0, overemitMs: 0, latSum: 0, phase: 0 };
+    this.syncNext = 300;
+    this.nodes = []; this.byId = new Map(); this.nextId = 1;
+    for (const n of topo) this.addNode(n.role, n.x, n.y, n, true);
+    this.recompute();
+  }
+
+  // ---------- topology ----------
+  addNode(role, x, y, src, silent) {
+    const id = src && src.id ? src.id : this.nextId;
+    this.nextId = Math.max(this.nextId, id + 1);
+    const n = { id, role, x, y, name: src && src.name ? src.name : this.makeName(role), pref: src && src.pref != null ? src.pref : null };
+    this.nodes.push(n); this.byId.set(id, n);
+    this.initRuntime(n);
+    if (!silent) this.recompute();
+    return n;
+  }
+  makeName(role) {
+    const p = role === 'sender' ? 'S' : role === 'receiver' ? 'R' : 'N';
+    const used = new Set(this.nodes.map((n) => n.name));
+    let k = 1; while (used.has(p + k)) k++;
+    return p + k;
+  }
+  initRuntime(n) {
+    const c = this.cfg, t = this.t;
+    Object.assign(n, {
+      mode: 'sleep', st: 'sleep', timer: 0, nextWake: t + ri(this, c.Tw), queue: [], retries: 0, txReadyAt: 0,
+      rx: null, curTx: null, busy: false, sawEnergy: false, energyNow: false, att: null, seq: 0,
+      nextGen: t + 100 + ri(this, c.interval),
+      E: { tx: 0, rx: 0, idle: 0, sleep: 0 }, W: { overhear: 0, overemit: 0, idle: 0, collision: 0 },
+      S: { gen: 0, delivered: 0, dropped: 0, rxOk: 0 }, pl: {}, bw: 0, rounds: 0, lastSeq: {},
+      hist: new Uint8Array(HIST), target: null, nb: n.nb || new Set(),
+    });
+  }
+  removeNode(id) {
+    this.nodes = this.nodes.filter((n) => n.id !== id);
+    this.byId.delete(id);
+    this.air = this.air.filter((x) => x.src !== id);
+    for (const n of this.nodes) { if (n.rx && n.rx.tx.src === id) n.rx = null; if (n.pref === id) n.pref = null; }
+    this.recompute();
+  }
+  setRole(n, role) {
+    n.role = role; n.name = this.makeName(role); n.pref = null;
+    this.air = this.air.filter((x) => x.src !== n.id);
+    this.initRuntime(n); this.recompute();
+  }
+  recompute() {
+    const R = this.cfg.range, N = this.nodes;
+    for (const n of N) n.nb = new Set();
+    for (let i = 0; i < N.length; i++) for (let j = i + 1; j < N.length; j++) {
+      if (dist(N[i], N[j]) <= R) { N[i].nb.add(N[j].id); N[j].nb.add(N[i].id); }
+    }
+    const recv = N.filter((n) => n.role === 'receiver');
+    for (const n of N) {
+      if (n.role !== 'sender') { n.target = null; continue; }
+      const pref = n.pref != null ? this.byId.get(n.pref) : null;
+      if (pref && pref.role === 'receiver') { n.target = pref.id; continue; }
+      let best = null, bd = Infinity;
+      for (const r of recv) { const d = dist(n, r); if (d < bd) { bd = d; best = r; } }
+      n.target = best ? best.id : null;
+    }
+  }
+  snapshot() { return this.nodes.map((n) => ({ id: n.id, name: n.name, role: n.role, x: n.x, y: n.y, pref: n.pref })); }
+  name(id) { const n = this.byId.get(id); return n ? n.name : '?'; }
+
+  // ---------- logging ----------
+  log(cat, msg, ids) {
+    if (this.headless) return;
+    const e = { id: ++this.logSeq, t: this.t, cat, msg, ids: ids || [] };
+    this.logs.push(e);
+    if (this.logs.length > 900) this.logs.splice(0, this.logs.length - 900);
+    if (this.onLog) this.onLog(e);
+  }
+  mark(type, ids) {
+    if (this.headless) return;
+    this.marks = this.marks.filter((m) => !(m.ids[0] === ids[0] && (m.type === type || (type === 'hidden' && m.type === 'collision'))));
+    this.marks.push({ type, ids, wall: (typeof performance !== 'undefined' ? performance.now() : Date.now()) });
+    if (this.marks.length > 200) this.marks.splice(0, this.marks.length - 200);
+  }
+
+  // ---------- radio primitives ----------
+  listen(n) { n.mode = 'listen'; }
+  sleep(n) { n.mode = 'sleep'; n.rx = null; n.st = 'sleep'; }
+  send(n, kind, dst, dur, extra) {
+    const t = this.t;
+    const x = Object.assign({ id: ++this.txSeq, src: n.id, dst: dst == null ? null : dst, kind, start: t, end: t + dur, dataStart: t, heard: {}, oe: 0 }, extra || {});
+    this.air.push(x);
+    n.mode = 'tx'; n.rx = null; n.curTx = x;
+    return x;
+  }
+
+  // ---------- traffic ----------
+  wantSend(n, t) { return n.role === 'sender' && n.queue.length > 0 && n.target != null && t >= n.txReadyAt; }
+  enqueue(n, t) {
+    if (n.role !== 'sender' || n.target == null) return;
+    if (n.queue.length >= 4) {
+      this.C.dropped++; n.S.dropped++;
+      this.log('drop', `${n.name} queue full — new packet dropped`, [n.id]);
+      return;
+    }
+    n.queue.push({ seq: ++n.seq, gen: t }); this.C.gen++; n.S.gen++;
+  }
+  burst() { for (const n of this.nodes) this.enqueue(n, this.t); }
+
+  begin(n) { if (!n.att) n.att = { start: this.t, oe: 0, tx: 0, idle: 0, defLogged: false, expLogged: false }; }
+  closeAttempt(n, a) {
+    if (!a) return;
+    const d = this.byId.get(n.target);
+    if (!d) return;
+    if (a.oe >= 3) {
+      const pct = a.tx ? Math.round((100 * a.oe) / a.tx) : 100;
+      this.log('overemit', `${n.name} → ${d.name}: ${a.oe} of ${a.tx} ms of ${this.P.oeNoun} went out while ${d.name} was asleep or busy (${pct}%)`, [n.id, d.id]);
+    }
+    if (this.P.waitNoun && a.idle >= 10) {
+      this.log('idle', `${n.name} idle-listened ${a.idle} ms waiting for ${d.name}'s ${this.P.waitNoun}`, [n.id, d.id]);
+    }
+  }
+  success(n) {
+    const t = this.t, a = n.att; n.att = null;
+    this.closeAttempt(n, a);
+    const p = n.queue.shift();
+    n.retries = 0; n.txReadyAt = t + 3;
+    if (!p) return;
+    const lat = t - p.gen;
+    this.C.delivered++; this.C.latSum += lat; n.S.delivered++;
+    this.log('deliver', `${n.name} → ${this.name(n.target)} #${p.seq} delivered · ${lat} ms after generation`, [n.id, n.target]);
+  }
+  fail(n, reason) {
+    const a = n.att; n.att = null;
+    this.closeAttempt(n, a);
+    n.retries++;
+    const p = n.queue[0];
+    if (!p) return;
+    if (n.retries > this.cfg.maxRetries) {
+      n.queue.shift(); n.retries = 0; this.C.dropped++; n.S.dropped++;
+      this.log('drop', `${n.name} → ${this.name(n.target)} #${p.seq} dropped after ${this.cfg.maxRetries + 1} attempts (${reason})`, [n.id, n.target]);
+    } else {
+      n.txReadyAt = this.t + 10 + ri(this, 40);
+      this.log('info', `${n.name} → ${this.name(n.target)} #${p.seq} attempt ${n.retries} failed (${reason}); retrying`, [n.id, n.target]);
+    }
+  }
+  received(n, x) {
+    n.S.rxOk++;
+    n.lastSeq[x.src] = x.seq;
+  }
+
+  // ---------- carrier sense outcome ----------
+  defer(n) {
+    this.C.defers++;
+    const Ra = this.byId.get(n.target);
+    if (!Ra) return;
+    const busy = [];
+    for (const x of this.air) if (x.src !== n.id && n.nb.has(x.src)) busy.push(x);
+    if (!busy.length) return;
+    let exposed = true; const parts = [];
+    for (const x of busy) {
+      const B = this.byId.get(x.src);
+      const Rb = x.dst != null ? this.byId.get(x.dst) : null;
+      parts.push(Rb ? `${B.name} → ${Rb.name}` : `${B.name} ${KIND_LABEL[x.kind]}`);
+      if (!B || !Rb || Rb === Ra || Rb === n || n.nb.has(Rb.id) || B.nb.has(Ra.id)) exposed = false;
+    }
+    const a = n.att || {};
+    if (exposed) {
+      this.C.exposed++;
+      if (!a.expLogged) {
+        a.expLogged = true;
+        const x = busy[0], B = this.byId.get(x.src), Rb = this.byId.get(x.dst);
+        this.log('exposed', `${n.name} → ${Ra.name} held back by ${B.name} → ${Rb.name}. ${n.name} is out of ${Rb.name}'s range and ${B.name} is out of ${Ra.name}'s range, so both frames could have gone through`, [n.id, B.id, Ra.id, Rb.id]);
+        this.mark('exposed', [n.id, B.id]);
+      }
+    } else if (!a.defLogged) {
+      a.defLogged = true;
+      this.log('defer', `${n.name} → ${Ra.name} deferred: channel busy (${parts.join(', ')})`, [n.id, ...busy.map((x) => x.src)]);
+    }
+  }
+
+  // ---------- main tick ----------
+  tick() {
+    const t = this.t, N = this.nodes, c = this.cfg;
+    this.air = this.air.filter((x) => x.end > t);
+    // traffic
+    if (c.sync) {
+      if (t >= this.syncNext) { this.syncNext = t + c.interval; for (const n of N) this.enqueue(n, t); }
+    } else {
+      for (const n of N) if (n.role === 'sender' && t >= n.nextGen) {
+        n.nextGen = t + Math.round(c.interval * (0.6 + 0.8 * this.rand()));
+        this.enqueue(n, t);
+      }
+    }
+    // carrier sense snapshot (frames already on air before this slot)
+    for (const n of N) {
+      n.busy = false;
+      for (const x of this.air) if (x.src !== n.id && n.nb.has(x.src)) { n.busy = true; break; }
+    }
+    for (const n of N) if (n.mode !== 'tx') this.P.step(n, t, this);
+    for (const n of N) this.receive(n, t);
+    for (const n of N) this.account(n, t);
+    const ending = this.air.filter((x) => x.end === t + 1);
+    for (const x of ending) for (const n of N) if (n.rx && n.rx.tx === x) this.deliver(n, x, t);
+    for (const x of ending) {
+      const s = this.byId.get(x.src);
+      if (s && s.curTx === x) { s.curTx = null; s.mode = 'listen'; this.P.onTxEnd(s, x, t, this); }
+    }
+    this.t++;
+  }
+
+  receive(n, t) {
+    n.energyNow = false;
+    if (n.mode !== 'listen') { n.rx = null; return; }
+    const txs = [];
+    for (const x of this.air) if (x.src !== n.id && n.nb.has(x.src)) txs.push(x);
+    if (txs.length) { n.sawEnergy = true; n.energyNow = true; }
+    if (n.rx && n.rx.tx.end <= t) n.rx = null;
+    if (!n.rx) {
+      let L = null;
+      for (const x of txs) {
+        if (x.start === t || (x.kind === 'PRE' && t < x.dataStart)) { if (!L || x.dataStart < L.dataStart) L = x; }
+      }
+      if (L) { n.rx = { tx: L, bad: false, coll: new Map(), joinAt: t, sup: new Set() }; L.heard[n.id] = t; }
+    }
+    if (n.rx) {
+      const L = n.rx.tx;
+      for (const x of txs) {
+        if (x === L) continue;
+        if (L.kind === 'HACK' && x.kind === 'HACK' && x.probe === L.probe) { n.rx.sup.add(x.src); continue; }
+        if (t >= L.dataStart) { n.rx.bad = true; n.rx.coll.set(x.src, x); }
+      }
+    }
+  }
+
+  account(n, t) {
+    let code = 0;
+    if (n.mode === 'tx') {
+      const x = n.curTx; n.E.tx++;
+      code = x.kind === 'PRE' ? (t < x.dataStart ? 3 : 4) : x.kind === 'STROBE' ? 3 : x.kind === 'DATA' ? 4 : (x.kind === 'BEACON' || x.kind === 'PROBE') ? 6 : 5;
+      if (OE_KINDS.has(x.kind) && x.dst != null) {
+        if (n.att) n.att.tx++;
+        const d = this.byId.get(x.dst);
+        const ready = d && d.mode === 'listen' && (!d.rx || d.rx.tx === x);
+        if (!ready) { x.oe++; n.W.overemit++; this.C.overemitMs++; if (n.att) n.att.oe++; }
+      }
+    } else if (n.mode === 'listen') {
+      if (n.rx) { n.E.rx++; code = n.rx.bad ? 7 : 2; }
+      else { n.E.idle++; code = 1; if (!n.energyNow) { n.W.idle++; if (n.att) n.att.idle++; } }
+    } else { n.E.sleep++; }
+    n.hist[t % HIST] = code;
+  }
+
+  deliver(n, x, t) {
+    const rx = n.rx; n.rx = null;
+    const ok = !rx.bad, dur = t + 1 - rx.joinAt, me = x.dst === n.id;
+    if (!ok) {
+      const awaiting = (x.kind === 'BEACON' || x.kind === 'PROBE') && n.att && n.target === x.src;
+      if (me || awaiting) this.collision(n, x, rx);
+    } else if (x.dst != null && !me && !n.att && (x.kind === 'PRE' || x.kind === 'DATA' || x.kind === 'STROBE')) {
+      n.W.overhear += dur; this.C.overhear++; this.C.overhearMs += dur;
+      const s = this.byId.get(x.src), d = this.byId.get(x.dst);
+      if (s && d) {
+        if (x.kind === 'STROBE') this.log('overhear', `${n.name} decoded ${s.name}'s strobe for ${d.name} and went straight back to sleep (${dur} ms awake)`, [n.id, s.id]);
+        else this.log('overhear', `${n.name} stayed awake ${dur} ms for ${s.name} → ${d.name} ${x.kind === 'PRE' ? 'preamble + DATA' : 'DATA'}, then discarded it`, [n.id, s.id]);
+        this.mark('overhear', [n.id, s.id]);
+      }
+    }
+    this.P.onRx(n, x, ok, t, this, rx);
+  }
+
+  collision(n, x, rx) {
+    const set = new Map([[x.src, x]]);
+    for (const [k, v] of rx.coll) set.set(k, v);
+    const ids = [...set.keys()];
+    const nodes = ids.map((id) => this.byId.get(id)).filter(Boolean);
+    this.C.collisions++;
+    for (const [sid, tx] of set) if (tx.dst === n.id) { const s = this.byId.get(sid); if (s) s.W.collision += tx.end - tx.dataStart; }
+    let hp = null;
+    for (let i = 0; i < nodes.length && !hp; i++) for (let j = i + 1; j < nodes.length; j++) {
+      if (!nodes[i].nb.has(nodes[j].id)) { hp = [nodes[i], nodes[j]]; break; }
+    }
+    const desc = [...set.values()].map((tx) => `${this.name(tx.src)}'s ${KIND_LABEL[tx.kind]}`).join(' + ');
+    if (hp) this.C.hidden++;
+    const key = n.id + ':' + ids.slice().sort().join(',');
+    this.collSeen = this.collSeen || new Map();
+    const last = this.collSeen.get(key);
+    this.collSeen.set(key, this.t);
+    if (last != null && this.t - last < 60) return; // same pair at same receiver: count, don't repeat the log line
+    if (hp) {
+      this.log('hidden', `${n.name} lost ${desc}. ${hp[0].name} and ${hp[1].name} cannot hear each other, so carrier sense could not prevent the overlap`, [n.id, hp[0].id, hp[1].id]);
+      this.mark('hidden', [n.id, hp[0].id, hp[1].id]);
+    } else {
+      const txs = [...set.values()].sort((a, b) => a.start - b.start);
+      const a = txs[0], b = txs[1];
+      let why = 'overlapping frames';
+      if (b && a.start === b.start) why = `${this.name(a.src)} and ${this.name(b.src)} hear each other but started in the same 1 ms slot, before either could sense the other`;
+      else if (b) why = `${this.name(b.src)} could hear ${this.name(a.src)} but sent its ${KIND_LABEL[b.kind]} without carrier sense`;
+      this.log('collision', `${n.name} lost ${desc}: ${why}`, [n.id, ...ids]);
+      this.mark('collision', [n.id, ...ids]);
+    }
+  }
+
+  // ---------- reporting ----------
+  summary() {
+    const N = this.nodes, t = Math.max(1, this.t);
+    let on = 0, energy = 0, idle = 0;
+    for (const n of N) { on += n.E.tx + n.E.rx + n.E.idle; energy += nodeEnergy(n); idle += n.W.idle; }
+    const C = this.C;
+    return {
+      t, gen: C.gen, delivered: C.delivered, dropped: C.dropped,
+      pdr: C.gen ? C.delivered / C.gen : 0,
+      latency: C.delivered ? C.latSum / C.delivered : 0,
+      duty: N.length ? on / (N.length * t) : 0,
+      energy, energyPerPkt: C.delivered ? energy / C.delivered : 0,
+      collisions: C.collisions, hidden: C.hidden, exposed: C.exposed, defers: C.defers,
+      overhear: C.overhear, overhearMs: C.overhearMs, overemitMs: C.overemitMs, idleMs: idle,
+    };
+  }
+}
+
+// ===================== Protocols =====================
+const BMAC = {
+  key: 'bmac', name: 'B-MAC', oeNoun: 'preamble',
+  step(n, t, s) {
+    const c = s.cfg;
+    switch (n.st) {
+      case 'sleep':
+        if (s.wantSend(n, t)) { s.begin(n); n.st = 'backoff'; n.timer = t + 1 + ri(s, 10); return; }
+        if (t >= n.nextWake) { n.nextWake = t + c.Tw; s.listen(n); n.st = 'check'; n.timer = t + 2; }
+        return;
+      case 'backoff':
+        if (t < n.timer) return;
+        if (n.busy) { s.defer(n); n.timer = t + 5 + ri(s, 20); return; }
+        { const pre = c.Tw + 3; s.send(n, 'PRE', n.target, pre + DUR.DATA, { dataStart: t + pre, seq: n.queue[0].seq }); n.st = 'txPre'; }
+        return;
+      case 'check': if (!n.rx && t >= n.timer) s.sleep(n); return;
+      case 'sendAck': s.send(n, 'ACK', n.ackTo, DUR.ACK); n.st = 'txAck'; return;
+      case 'waitAck': if (t >= n.timer) { s.fail(n, 'no ACK'); s.sleep(n); } return;
+      default: if (n.mode === 'listen' && !n.rx) s.sleep(n);
+    }
+  },
+  onTxEnd(n, x, t, s) {
+    if (x.kind === 'PRE') { n.st = 'waitAck'; n.timer = t + 3; }
+    else s.sleep(n);
+  },
+  onRx(n, x, ok, t, s) {
+    if (x.kind === 'PRE') {
+      if (ok && x.dst === n.id) { s.received(n, x); n.ackTo = x.src; n.st = 'sendAck'; }
+      else if (n.st === 'check') s.sleep(n);
+    } else if (x.kind === 'ACK') {
+      if (ok && x.dst === n.id && n.st === 'waitAck') { s.success(n); s.sleep(n); }
+    }
+  },
+};
+
+const XMAC = {
+  key: 'xmac', name: 'X-MAC', oeNoun: 'strobes',
+  step(n, t, s) {
+    const c = s.cfg;
+    switch (n.st) {
+      case 'sleep':
+        if (s.wantSend(n, t)) { s.begin(n); n.st = 'backoff'; n.timer = t + 1 + ri(s, 8); return; }
+        if (t >= n.nextWake) { n.nextWake = t + c.Tw; s.listen(n); n.st = 'check'; n.timer = t + 3; }
+        return;
+      case 'backoff':
+        if (t < n.timer) return;
+        if (n.busy) { s.defer(n); n.timer = t + 4 + ri(s, 16); return; }
+        n.st = 'cca2'; return;
+      case 'cca2':
+        if (n.busy) { s.defer(n); n.st = 'backoff'; n.timer = t + 4 + ri(s, 16); return; }
+        n.strobeEnd = t + c.Tw + 4; s.send(n, 'STROBE', n.target, DUR.STROBE); n.st = 'strobe'; return;
+      case 'gap':
+        if (t < n.timer) return;
+        if (t < n.strobeEnd) { s.send(n, 'STROBE', n.target, DUR.STROBE); n.st = 'strobe'; }
+        else { s.fail(n, 'no early ACK'); s.sleep(n); }
+        return;
+      case 'sendData': s.send(n, 'DATA', n.target, DUR.DATA, { seq: n.queue[0] ? n.queue[0].seq : 0 }); n.st = 'txData'; return;
+      case 'waitAck': if (t >= n.timer) { s.fail(n, 'no ACK'); s.sleep(n); } return;
+      case 'check': case 'waitData': if (!n.rx && t >= n.timer) s.sleep(n); return;
+      case 'sendEack': s.send(n, 'EACK', n.ackTo, DUR.EACK); n.st = 'txEack'; return;
+      case 'sendAck': s.send(n, 'ACK', n.ackTo, DUR.ACK); n.st = 'txAck'; return;
+      default: if (n.mode === 'listen' && !n.rx) s.sleep(n);
+    }
+  },
+  onTxEnd(n, x, t, s) {
+    if (x.kind === 'STROBE') { n.st = 'gap'; n.timer = t + 2; }
+    else if (x.kind === 'EACK') { n.st = 'waitData'; n.timer = t + 5; }
+    else if (x.kind === 'DATA') { n.st = 'waitAck'; n.timer = t + 3; }
+    else s.sleep(n);
+  },
+  onRx(n, x, ok, t, s) {
+    switch (x.kind) {
+      case 'STROBE':
+        if (!ok) { if (n.st === 'check') n.timer = Math.max(n.timer, t + 3); return; }
+        if (x.dst === n.id) {
+          if (n.st === 'check' || (n.st === 'waitData' && x.src === n.ackTo)) { n.ackTo = x.src; n.st = 'sendEack'; }
+        } else if (n.st === 'check') s.sleep(n);
+        return;
+      case 'EACK': if (ok && x.dst === n.id && n.st === 'gap') n.st = 'sendData'; return;
+      case 'DATA': if (ok && x.dst === n.id) { s.received(n, x); n.ackTo = x.src; n.st = 'sendAck'; } return;
+      case 'ACK': if (ok && x.dst === n.id && n.st === 'waitAck') { s.success(n); s.sleep(n); } return;
+    }
+  },
+};
+
+const CMAC = {
+  key: 'contiki', name: 'ContikiMAC', oeNoun: 'packet copies',
+  step(n, t, s) {
+    const c = s.cfg;
+    switch (n.st) {
+      case 'sleep':
+        if (s.wantSend(n, t)) {
+          s.begin(n);
+          const ph = n.pl[n.target];
+          if (c.phaseLock && ph != null) {
+            const p = (((ph - 12) % c.Tw) + c.Tw) % c.Tw;
+            n.st = 'plWait'; n.timer = t + ((((p - (t % c.Tw)) % c.Tw) + c.Tw) % c.Tw); n.att.pl = true;
+          } else { n.st = 'backoff'; n.timer = t + 1 + ri(s, 5); }
+          return;
+        }
+        if (t >= n.nextWake) { n.nextWake = t + c.Tw; s.listen(n); n.sawEnergy = false; n.st = 'cca'; n.timer = t + 2; }
+        return;
+      case 'plWait': if (t >= n.timer) { n.st = 'backoff'; n.timer = t; CMAC.step(n, t, s); } return;
+      case 'backoff':
+        if (t < n.timer) return;
+        if (n.busy) { s.defer(n); n.timer = t + 3 + ri(s, 12); return; }
+        n.st = 'cca2'; return;
+      case 'cca2':
+        if (n.busy) { s.defer(n); n.st = 'backoff'; n.timer = t + 3 + ri(s, 12); return; }
+        n.copyEnd = t + c.Tw + DUR.DATA + 2;
+        s.send(n, 'DATA', n.target, DUR.DATA, { seq: n.queue[0].seq }); n.st = 'copy'; return;
+      case 'gap':
+        if (t < n.timer) return;
+        if (t < n.copyEnd && n.queue.length) { s.send(n, 'DATA', n.target, DUR.DATA, { seq: n.queue[0].seq }); n.st = 'copy'; }
+        else {
+          if (n.att && n.att.pl) { delete n.pl[n.target]; s.log('info', `${n.name} lost its phase lock on ${s.name(n.target)}; next attempt sends copies for a full wake interval`, [n.id, n.target]); }
+          s.fail(n, 'no ACK'); s.sleep(n);
+        }
+        return;
+      case 'cca':
+        if (n.sawEnergy || n.rx) { n.st = 'await'; n.timer = t + DUR.DATA + 4; n.tries = 0; return; }
+        if (t >= n.timer) s.sleep(n);
+        return;
+      case 'await': if (!n.rx && t >= n.timer) s.sleep(n); return;
+      case 'sendAck': s.send(n, 'ACK', n.ackTo, DUR.ACK); n.st = 'txAck'; return;
+      default: if (n.mode === 'listen' && !n.rx) s.sleep(n);
+    }
+  },
+  onTxEnd(n, x, t, s) {
+    if (x.kind === 'DATA') { n.st = 'gap'; n.timer = t + 2; }
+    else s.sleep(n);
+  },
+  onRx(n, x, ok, t, s) {
+    if (x.kind === 'DATA') {
+      if (ok && x.dst === n.id) { s.received(n, x); n.ackTo = x.src; n.st = 'sendAck'; return; }
+      if (n.st === 'cca' || n.st === 'await') {
+        if (ok) s.sleep(n);
+        else { n.tries = (n.tries || 0) + 1; if (n.tries < 3) { n.st = 'await'; n.timer = t + DUR.DATA + 4; } else s.sleep(n); }
+      }
+    } else if (x.kind === 'ACK') {
+      if (ok && x.dst === n.id && n.st === 'gap') {
+        const first = n.pl[n.target] == null;
+        n.pl[n.target] = t % s.cfg.Tw;
+        if (first && s.cfg.phaseLock) {
+          s.C.phase++;
+          s.log('info', `${n.name} learned ${s.name(n.target)}'s wake-up phase from the ACK; its next packets start just before ${s.name(n.target)} wakes`, [n.id, n.target]);
+        }
+        s.success(n); s.sleep(n);
+      }
+    }
+  },
+};
+
+const RIMAC = {
+  key: 'rimac', name: 'RI-MAC', oeNoun: 'DATA', waitNoun: 'beacon',
+  step(n, t, s) {
+    const c = s.cfg;
+    switch (n.st) {
+      case 'sleep':
+        if (s.wantSend(n, t)) { s.begin(n); s.listen(n); n.st = 'waitB'; return; }
+        if (t >= n.nextWake) {
+          if (n.busy) { n.nextWake = t + 2 + ri(s, 6); return; }
+          n.nextWake = t + Math.round(c.Tw * (0.5 + s.rand())); n.bw = 0; n.rounds = 0; n.ackFor = null;
+          s.send(n, 'BEACON', null, DUR.BEACON, { bw: 0 }); n.st = 'txB';
+        }
+        return;
+      case 'waitB': if (!n.att || t - n.att.start > 3 * c.Tw) { s.fail(n, 'no beacon heard'); s.sleep(n); } return;
+      case 'rib':
+        if (t < n.timer) return;
+        if (n.busy) { s.defer(n); n.st = 'waitB'; return; }
+        s.send(n, 'DATA', n.target, DUR.DATA, { seq: n.queue[0].seq }); n.st = 'txData'; return;
+      case 'sendData': s.send(n, 'DATA', n.target, DUR.DATA, { seq: n.queue[0].seq }); n.st = 'txData'; return;
+      case 'waitAck': if (t >= n.timer) { s.fail(n, 'no ACK beacon'); s.sleep(n); } return;
+      case 'dwell': if (!n.rx && t >= n.timer) s.sleep(n); return;
+      case 'sendB': s.send(n, 'BEACON', null, DUR.BEACON, { bw: n.bw, ackFor: n.ackFor }); n.ackFor = null; n.st = 'txB'; return;
+      default: if (n.mode === 'listen' && !n.rx) s.sleep(n);
+    }
+  },
+  onTxEnd(n, x, t, s) {
+    if (x.kind === 'BEACON') { n.st = 'dwell'; n.timer = t + 1 + n.bw + 3; }
+    else if (x.kind === 'DATA') { n.st = 'waitAck'; n.timer = t + 3; }
+    else s.sleep(n);
+  },
+  onRx(n, x, ok, t, s) {
+    if (x.kind === 'BEACON') {
+      if (!ok || x.src !== n.target || !n.att) return;
+      if (n.st === 'waitAck') {
+        if (x.ackFor === n.id) s.success(n); else s.fail(n, 'collision');
+        if (!n.queue.length) { s.sleep(n); return; }
+        s.begin(n);
+      } else if (n.st !== 'waitB') return;
+      if (!x.bw) n.st = 'sendData';
+      else { n.st = 'rib'; n.timer = t + 1 + ri(s, x.bw); }
+      return;
+    }
+    if (x.kind === 'DATA') {
+      if (n.st !== 'dwell') return;
+      if (ok && x.dst === n.id) { s.received(n, x); n.ackFor = x.src; n.st = 'sendB'; return; }
+      if (!ok) {
+        n.bw = Math.min(n.bw ? n.bw * 2 : 4, 32); n.rounds++;
+        if (n.rounds > 5) { s.sleep(n); return; }
+        n.st = 'sendB';
+        s.log('info', `${n.name} detected a collision and re-beacons with backoff window BW = ${n.bw} ms`, [n.id]);
+        return;
+      }
+      n.timer = Math.max(n.timer, t + 3);
+    }
+  },
+};
+
+const AMAC = {
+  key: 'amac', name: 'A-MAC', oeNoun: 'DATA', waitNoun: 'probe',
+  step(n, t, s) {
+    const c = s.cfg;
+    switch (n.st) {
+      case 'sleep':
+        if (s.wantSend(n, t)) { s.begin(n); s.listen(n); n.st = 'waitP'; return; }
+        if (t >= n.nextWake) {
+          if (n.busy) { n.nextWake = t + 2 + ri(s, 6); return; }
+          n.nextWake = t + Math.round(c.Tw * (0.75 + 0.5 * s.rand())); n.bw = 4; n.rounds = 0; n.ackFor = null;
+          s.send(n, 'PROBE', null, DUR.PROBE, { bw: n.bw }); n.st = 'txP';
+        }
+        return;
+      case 'waitP': if (!n.att || t - n.att.start > 3 * c.Tw) { s.fail(n, 'no probe heard'); s.sleep(n); } return;
+      case 'sendHack': s.send(n, 'HACK', n.target, DUR.HACK, { probe: n.probeId }); n.st = 'txH'; return;
+      case 'amb':
+        if (t < n.timer) return;
+        if (n.busy) { s.defer(n); n.st = 'waitP'; return; }
+        s.send(n, 'DATA', n.target, DUR.DATA, { seq: n.queue[0].seq }); n.st = 'txData'; return;
+      case 'waitAck': if (t >= n.timer) { s.fail(n, 'no ACK probe'); s.sleep(n); } return;
+      case 'hackWait': case 'dwell': if (!n.rx && t >= n.timer) s.sleep(n); return;
+      case 'sendP': s.send(n, 'PROBE', null, DUR.PROBE, { bw: n.bw, ackFor: n.ackFor }); n.ackFor = null; n.st = 'txP'; return;
+      default: if (n.mode === 'listen' && !n.rx) s.sleep(n);
+    }
+  },
+  onTxEnd(n, x, t, s) {
+    if (x.kind === 'PROBE') { n.st = 'hackWait'; n.timer = t + 2; }
+    else if (x.kind === 'HACK') { n.st = 'amb'; n.timer = t + 1 + ri(s, n.pbw); }
+    else if (x.kind === 'DATA') { n.st = 'waitAck'; n.timer = t + 3; }
+    else s.sleep(n);
+  },
+  onRx(n, x, ok, t, s, rx) {
+    if (x.kind === 'PROBE') {
+      if (!ok || x.src !== n.target || !n.att) return;
+      if (n.st === 'waitAck') {
+        if (x.ackFor === n.id) s.success(n); else s.fail(n, 'collision');
+        if (!n.queue.length) { s.sleep(n); return; }
+        s.begin(n);
+      } else if (n.st !== 'waitP') return;
+      n.probeId = x.id; n.pbw = x.bw; n.st = 'sendHack';
+      return;
+    }
+    if (x.kind === 'HACK') {
+      if (x.dst !== n.id || n.st !== 'hackWait') return;
+      if (!ok) { s.sleep(n); return; }
+      n.st = 'dwell'; n.timer = t + 1 + n.bw + 3;
+      if (rx.sup.size > 0) {
+        const ids = [x.src, ...rx.sup];
+        s.log('info', `${n.name} got ${ids.length} concurrent auto-ACKs (${ids.map((i) => s.name(i)).join(', ')}). Identical frames superpose, so the probe still detects pending senders`, [n.id, ...ids]);
+      }
+      return;
+    }
+    if (x.kind === 'DATA') {
+      if (n.st !== 'dwell') return;
+      if (ok && x.dst === n.id) { s.received(n, x); n.ackFor = x.src; n.st = 'sendP'; return; }
+      if (!ok) {
+        n.bw = Math.min(n.bw * 2, 32); n.rounds++;
+        if (n.rounds > 5) { s.sleep(n); return; }
+        n.st = 'sendP';
+        s.log('info', `${n.name} detected a collision and sends a new probe with backoff window ${n.bw} ms`, [n.id]);
+        return;
+      }
+      n.timer = Math.max(n.timer, t + 3);
+    }
+  },
+};
+
+const PROTOS = { bmac: BMAC, xmac: XMAC, contiki: CMAC, rimac: RIMAC, amac: AMAC };
+const PROTO_ORDER = ['bmac', 'xmac', 'contiki', 'rimac', 'amac'];
+
+if (typeof module !== 'undefined') module.exports = { Sim, PROTOS, PROTO_ORDER, nodeEnergy, dist };
+
+// ===================== UI =====================
+const { useState, useEffect, useRef } = React;
+const html = htm.bind(React.createElement);
+const W = 1000, H = 620;
+
+const PRESETS = {
+  mixed: { label: 'Mixed field (all phenomena)', sync: false, nodes: [
+    { id: 1, name: 'R1', role: 'receiver', x: 300, y: 330 }, { id: 2, name: 'R2', role: 'receiver', x: 720, y: 330 },
+    { id: 3, name: 'S1', role: 'sender', x: 110, y: 380 }, { id: 4, name: 'S2', role: 'sender', x: 420, y: 480 },
+    { id: 5, name: 'S3', role: 'sender', x: 460, y: 220 }, { id: 6, name: 'S4', role: 'sender', x: 580, y: 220 },
+    { id: 7, name: 'S5', role: 'sender', x: 860, y: 440 }, { id: 8, name: 'N1', role: 'idle', x: 300, y: 450 },
+    { id: 9, name: 'N2', role: 'idle', x: 700, y: 470 }] },
+  hidden: { label: 'Hidden terminal (S1 ↛ S2)', sync: true, nodes: [
+    { id: 1, name: 'S1', role: 'sender', x: 260, y: 310 }, { id: 2, name: 'R1', role: 'receiver', x: 450, y: 310 },
+    { id: 3, name: 'S2', role: 'sender', x: 640, y: 310 }] },
+  exposed: { label: 'Exposed terminal (two cells)', sync: true, nodes: [
+    { id: 1, name: 'R1', role: 'receiver', x: 180, y: 310 }, { id: 2, name: 'S1', role: 'sender', x: 360, y: 310 },
+    { id: 3, name: 'S2', role: 'sender', x: 500, y: 310 }, { id: 4, name: 'R2', role: 'receiver', x: 680, y: 310 }] },
+  crowd: { label: 'Overhearing crowd', sync: false, nodes: [
+    { id: 1, name: 'S1', role: 'sender', x: 380, y: 310 }, { id: 2, name: 'R1', role: 'receiver', x: 560, y: 310 },
+    { id: 3, name: 'N1', role: 'idle', x: 300, y: 200 }, { id: 4, name: 'N2', role: 'idle', x: 250, y: 330 },
+    { id: 5, name: 'N3', role: 'idle', x: 320, y: 450 }, { id: 6, name: 'N4', role: 'idle', x: 450, y: 180 },
+    { id: 7, name: 'N5', role: 'idle', x: 450, y: 450 }] },
+  funnel: { label: 'Funnel: 4 senders → 1 sink', sync: true, nodes: [
+    { id: 1, name: 'R1', role: 'receiver', x: 500, y: 310 }, { id: 2, name: 'S1', role: 'sender', x: 330, y: 250 },
+    { id: 3, name: 'S2', role: 'sender', x: 670, y: 250 }, { id: 4, name: 'S3', role: 'sender', x: 420, y: 470 },
+    { id: 5, name: 'S4', role: 'sender', x: 600, y: 470 }] },
+};
+
+const PROTO_INFO = {
+  bmac: { ref: 'Polastre, Hill & Culler · SenSys 2004',
+    how: 'Low-power listening. Every node samples the channel briefly once per check interval. A sender transmits one long preamble that outlasts the check interval, then the data frame, so the receiver is guaranteed to wake somewhere inside it.',
+    watch: ['The violet preamble bar on the timeline spans a full check interval.', 'Any neighbour that wakes during the preamble must stay up until the data arrives, then discards it: overhearing.', 'On average half the preamble goes out before the target wakes: over-emitting. Long preambles also block nearby senders (exposed) and overlap hidden ones.'] },
+  xmac: { ref: 'Buettner, Yee, Anderson & Han · SenSys 2006',
+    how: 'The long preamble is cut into short strobes that carry the target address, with listening gaps between them. The target answers in a gap with an early ACK and the data follows immediately.',
+    watch: ['A comb of strobes on the timeline that stops as soon as the target wakes.', 'Non-targets decode one strobe and go back to sleep, so overhearing drops to about 1 ms.', 'Hidden senders’ strobes, early ACKs and DATA can still collide at the receiver.'] },
+  contiki: { ref: 'Dunkels · SICS Technical Report T2011:13',
+    how: 'The sender repeats the full data frame with short gaps until the receiver ACKs inside a gap. Receivers wake with two CCAs spaced wider than the gap, so a copy cannot slip past. After one delivery the sender knows the receiver’s phase and starts just before it wakes.',
+    watch: ['“Learned wake-up phase” in the log, after which over-emitting falls sharply.', 'Non-targets sleep after a single copy.', 'Copies from hidden senders collide at the receiver; a failed phase-locked attempt falls back to a full interval.'] },
+  rimac: { ref: 'Sun, Gurewitz & Johnson · SenSys 2008',
+    how: 'Receiver-initiated. Each node wakes at a randomised interval and broadcasts a short beacon. A sender switches its radio on and waits for its target’s beacon, then sends. The receiver’s ACK is another beacon that also invites the next sender; after a collision it carries a backoff window.',
+    watch: ['Senders pay idle listening instead of over-emitting.', 'Two senders waiting on the same beacon with BW = 0 collide at once, then the window grows.', 'Hidden senders keep colliding until the backoff window spreads them out.'] },
+  amac: { ref: 'Dutta, Dawson-Haggerty, Chen, Liang & Terzis · SenSys 2010',
+    how: 'Receiver-initiated with probes. A waiting sender answers its target’s probe with a hardware auto-ACK; simultaneous auto-ACKs are identical and superpose instead of colliding. The receiver stays up only if someone has data. Senders back off and use CCA before DATA; the next probe doubles as the ACK.',
+    watch: ['Receivers with no traffic wake for about 3 ms.', 'Log entries for superposed auto-ACKs from several senders.', 'Hidden senders collide after the backoff; the probe’s window doubles until they separate.'] },
+};
+
+const CATS = [
+  { key: 'hidden', label: 'Hidden terminal', color: 'bad', def: 'Two transmitters that cannot hear each other overlap at a common receiver.' },
+  { key: 'collision', label: 'Collision', color: 'bad', def: 'Overlap between transmitters that can hear each other: same-slot start, or a frame sent without carrier sense.' },
+  { key: 'exposed', label: 'Exposed terminal', color: 'beacon', def: 'A sender defers for a transmission that could not have hurt its receiver, while its own frame could not have hurt the other receiver.' },
+  { key: 'overhear', label: 'Overhearing', color: 'pre', def: 'A node stays awake to receive a frame addressed to someone else.' },
+  { key: 'overemit', label: 'Over-emitting', color: 'data', def: 'Transmitting while the destination is asleep or busy with another frame.' },
+  { key: 'idle', label: 'Idle listening', color: 'rx', def: 'Radio on with nothing on the air, waiting for a beacon or probe.' },
+  { key: 'defer', label: 'Deferral', color: 'muted', def: 'CCA found the channel busy with genuine contention.' },
+  { key: 'deliver', label: 'Delivered', color: 'ack', def: 'Packet acknowledged by its receiver.' },
+  { key: 'drop', label: 'Dropped', color: 'bad', def: 'Packet abandoned after the retry limit or a full queue.' },
+  { key: 'info', label: 'Protocol', color: 'muted', def: 'Retries, phase-lock, backoff-window and auto-ACK notes.' },
+];
+const CAT = Object.fromEntries(CATS.map((c) => [c.key, c]));
+
+const SPEEDS = [{ l: '0.02×', v: 0.02 }, { l: '0.05×', v: 0.05 }, { l: '0.1×', v: 0.1 }, { l: '0.25×', v: 0.25 }, { l: '0.5×', v: 0.5 }, { l: '1× real time', v: 1 }, { l: '5×', v: 5 }];
+const TOKS = ['bg', 'panel', 'field', 'ink', 'muted', 'line', 'grid', 'pre', 'data', 'ack', 'beacon', 'bad', 'listen', 'rx', 'node-fill', 'node-text'];
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement); const o = {};
+  for (const k of TOKS) o[k] = cs.getPropertyValue('--' + k).trim() || '#888';
+  return o;
+}
+const kindTok = (k) => (k === 'PRE' || k === 'STROBE') ? 'pre' : k === 'DATA' ? 'data' : (k === 'BEACON' || k === 'PROBE') ? 'beacon' : 'ack';
+const fmtT = (t) => (t / 1000).toFixed(3) + ' s';
+const pct = (v) => (v * 100).toFixed(1) + '%';
+
+// ---------- field canvas ----------
+function FieldCanvas({ simRef, toolRef, selRef, hlRef, showRangesRef, onSelect, onEdit }) {
+  const ref = useRef(null);
+  const drag = useRef(null);
+  useEffect(() => {
+    const cv = ref.current; const ctx = cv.getContext('2d');
+    let raf, tk = readTokens(), frame = 0;
+    const draw = () => {
+      raf = requestAnimationFrame(draw);
+      if (++frame % 30 === 0) tk = readTokens();
+      const dpr = window.devicePixelRatio || 1;
+      const cw = cv.clientWidth, ch = cw * H / W;
+      if (cv.width !== Math.round(cw * dpr) || cv.height !== Math.round(ch * dpr)) { cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr); }
+      const sc = cw / W; const s = simRef.current; const R = s.cfg.range * sc;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = tk.field; ctx.fillRect(0, 0, cw, ch);
+      ctx.fillStyle = tk.grid;
+      for (let x = 50; x < W; x += 50) for (let y = 50; y < H; y += 50) { ctx.fillRect(x * sc - 1, y * sc - 1, 2, 2); }
+      // scale bar: 1 unit = 0.1 m
+      ctx.strokeStyle = tk.muted; ctx.lineWidth = 1.5; ctx.beginPath();
+      ctx.moveTo(16, ch - 16); ctx.lineTo(16 + 100 * sc, ch - 16); ctx.moveTo(16, ch - 20); ctx.lineTo(16, ch - 12); ctx.moveTo(16 + 100 * sc, ch - 20); ctx.lineTo(16 + 100 * sc, ch - 12); ctx.stroke();
+      ctx.fillStyle = tk.muted; ctx.font = '500 11px "JetBrains Mono", monospace'; ctx.textBaseline = 'bottom'; ctx.textAlign = 'left';
+      ctx.fillText('10 m', 20 + 100 * sc, ch - 10);
+      const sel = selRef.current, nodes = s.nodes, P = (n) => [n.x * sc, n.y * sc];
+      // range circles
+      for (const n of nodes) {
+        const isSel = n.id === sel;
+        if (!showRangesRef.current && !isSel) continue;
+        const [x, y] = P(n);
+        ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2);
+        if (isSel) { ctx.globalAlpha = 0.06; ctx.fillStyle = tk.ink; ctx.fill(); ctx.globalAlpha = 0.55; }
+        else ctx.globalAlpha = 0.45;
+        ctx.setLineDash([4, 5]); ctx.strokeStyle = isSel ? tk.ink : tk.line; ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+      }
+      // sender → target links
+      for (const n of nodes) {
+        if (n.role !== 'sender' || n.target == null) continue;
+        const d = s.byId.get(n.target); if (!d) continue;
+        const [x1, y1] = P(n), [x2, y2] = P(d); const inR = n.nb.has(d.id);
+        ctx.setLineDash([3, 4]); ctx.strokeStyle = inR ? tk.muted : tk.bad; ctx.globalAlpha = inR ? 0.55 : 0.8; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.setLineDash([]);
+        const a = Math.atan2(y2 - y1, x2 - x1), ex = x2 - Math.cos(a) * 22, ey = y2 - Math.sin(a) * 22;
+        ctx.fillStyle = ctx.strokeStyle; ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(ex - Math.cos(a - 0.45) * 8, ey - Math.sin(a - 0.45) * 8); ctx.lineTo(ex - Math.cos(a + 0.45) * 8, ey - Math.sin(a + 0.45) * 8); ctx.fill();
+        if (!inR) { ctx.font = '600 11px "Barlow Semi Condensed", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('out of range', (x1 + x2) / 2, (y1 + y2) / 2 - 9); }
+        ctx.globalAlpha = 1;
+      }
+      // frames on air
+      for (const x of s.air) {
+        const src = s.byId.get(x.src); if (!src) continue;
+        const [sx, sy] = P(src); const col = tk[kindTok(x.kind)];
+        ctx.beginPath(); ctx.arc(sx, sy, R, 0, Math.PI * 2);
+        ctx.globalAlpha = 0.08; ctx.fillStyle = col; ctx.fill();
+        ctx.globalAlpha = 0.6; ctx.strokeStyle = col; ctx.lineWidth = 1.5; ctx.stroke();
+        const prog = (s.t - x.start) / Math.max(1, x.end - x.start);
+        ctx.globalAlpha = 0.9; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(sx, sy, 22, -Math.PI / 2, -Math.PI / 2 + prog * Math.PI * 2); ctx.stroke();
+        if (x.dst != null) { const d = s.byId.get(x.dst); if (d) { const [dx, dy] = P(d); ctx.globalAlpha = 0.85; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(dx, dy); ctx.stroke(); } }
+        ctx.globalAlpha = 1; ctx.fillStyle = col; ctx.font = '600 10.5px "JetBrains Mono", monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+        const lab = x.kind === 'PRE' ? (s.t < x.dataStart ? 'PREAMBLE' : 'DATA') : (x.kind === 'BEACON' || x.kind === 'PROBE') && x.bw ? `${x.kind === 'BEACON' ? 'BCN' : 'PRB'} BW=${x.bw}` : x.ackFor != null ? `${x.kind === 'BEACON' ? 'BCN' : 'PRB'}+ACK` : KIND_SHORT[x.kind];
+        ctx.fillText(lab, sx + 20, sy - 18);
+      }
+      // event marks
+      const now = performance.now();
+      s.marks = s.marks.filter((m) => now - m.wall < 2400);
+      for (const m of s.marks) {
+        const a = 1 - (now - m.wall) / 2400; const ns = m.ids.map((id) => s.byId.get(id));
+        if (ns.some((n) => !n)) continue;
+        ctx.globalAlpha = Math.max(0, a); ctx.font = '700 11px "Barlow Semi Condensed", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        if (m.type === 'hidden' || m.type === 'collision') {
+          const [x, y] = P(ns[0]); ctx.strokeStyle = tk.bad; ctx.lineWidth = 2.5;
+          const r0 = 26 + (1 - a) * 14;
+          for (let i = 0; i < 8; i++) { const an = i * Math.PI / 4; ctx.beginPath(); ctx.moveTo(x + Math.cos(an) * (r0 - 7), y + Math.sin(an) * (r0 - 7)); ctx.lineTo(x + Math.cos(an) * r0, y + Math.sin(an) * r0); ctx.stroke(); }
+          ctx.fillStyle = tk.bad; ctx.fillText(m.type === 'hidden' ? 'HIDDEN TERMINAL' : 'COLLISION', x, y - r0 - 9);
+          if (m.type === 'hidden' && ns[2]) {
+            const [ax, ay] = P(ns[1]), [bx, by] = P(ns[2]);
+            ctx.setLineDash([6, 5]); ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke(); ctx.setLineDash([]);
+            ctx.fillText('can’t hear each other', (ax + bx) / 2, (ay + by) / 2 + 12);
+          }
+        } else if (m.type === 'exposed') {
+          const [ax, ay] = P(ns[0]), [bx, by] = P(ns[1]);
+          ctx.strokeStyle = tk.beacon; ctx.fillStyle = tk.beacon; ctx.setLineDash([6, 5]); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke(); ctx.setLineDash([]);
+          ctx.fillText('EXPOSED TERMINAL', ax, ay - 34);
+        } else if (m.type === 'overhear') {
+          const [x, y] = P(ns[0]); ctx.strokeStyle = tk.pre; ctx.fillStyle = tk.pre; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(x, y, 24 + (1 - a) * 10, 0, Math.PI * 2); ctx.stroke();
+          ctx.fillText('OVERHEARING', x, y + 44);
+        }
+        ctx.globalAlpha = 1;
+      }
+      // nodes
+      const hl = hlRef.current; const hlOn = hl && now - hl.wall < 4000 ? new Set(hl.ids) : null;
+      const r = Math.max(10, Math.min(15, 15 * sc * 1.6));
+      for (const n of nodes) {
+        const [x, y] = P(n);
+        if (hlOn && hlOn.has(n.id)) { ctx.globalAlpha = 0.25 + 0.2 * Math.sin(now / 160); ctx.fillStyle = tk.beacon; ctx.beginPath(); ctx.arc(x, y, r + 14, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; }
+        // radio ring
+        ctx.lineWidth = 3;
+        if (n.mode === 'tx' && n.curTx) { ctx.strokeStyle = tk[kindTok(n.curTx.kind)]; ctx.lineWidth = 4; }
+        else if (n.mode === 'listen') { ctx.strokeStyle = n.rx ? (n.rx.bad ? tk.bad : tk.rx) : tk.listen; }
+        else { ctx.strokeStyle = tk.line; ctx.lineWidth = 1.5; ctx.setLineDash([2, 3]); }
+        ctx.beginPath(); ctx.arc(x, y, r + 5, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+        // body
+        ctx.beginPath();
+        if (n.role === 'receiver') { const q = r * 0.95; ctx.roundRect ? ctx.roundRect(x - q, y - q, 2 * q, 2 * q, 4) : ctx.rect(x - q, y - q, 2 * q, 2 * q); }
+        else ctx.arc(x, y, n.role === 'idle' ? r * 0.85 : r, 0, Math.PI * 2);
+        if (n.role === 'idle') { ctx.fillStyle = tk.panel; ctx.fill(); ctx.strokeStyle = tk.ink; ctx.lineWidth = 1.5; ctx.stroke(); }
+        else { ctx.fillStyle = tk['node-fill']; ctx.fill(); }
+        ctx.fillStyle = n.role === 'idle' ? tk.ink : tk['node-text'];
+        ctx.font = '700 11.5px "Barlow Semi Condensed", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(n.name, x, y + 0.5);
+        if (n.queue && n.queue.length) {
+          ctx.fillStyle = tk.beacon; ctx.beginPath(); ctx.arc(x + r * 0.85, y - r * 0.85, 7, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = tk['node-text']; ctx.font = '700 9.5px "JetBrains Mono", monospace'; ctx.fillText(String(n.queue.length), x + r * 0.85, y - r * 0.85 + 0.5);
+        }
+        if (n.id === sel) {
+          ctx.strokeStyle = tk.ink; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y, r + 10, 0, Math.PI * 2); ctx.stroke();
+          ctx.fillStyle = tk.ink; ctx.font = '500 10.5px "JetBrains Mono", monospace'; ctx.textBaseline = 'top';
+          ctx.fillText(`${n.mode} · ${n.st}`, x, y + r + 14);
+        }
+      }
+    };
+    raf = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const toWorld = (e) => { const rc = ref.current.getBoundingClientRect(); const sc = rc.width / W; return { x: (e.clientX - rc.left) / sc, y: (e.clientY - rc.top) / sc, sc }; };
+  const hit = (p) => { const s = simRef.current; let best = null, bd = 24 / Math.max(0.4, p.sc); for (const n of s.nodes) { const d = Math.hypot(n.x - p.x, n.y - p.y); if (d < bd) { bd = d; best = n; } } return best; };
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  const down = (e) => {
+    const p = toWorld(e), n = hit(p), tool = toolRef.current, s = simRef.current;
+    if (tool === 'delete') { if (n) { s.removeNode(n.id); if (selRef.current === n.id) onSelect(null); onEdit(); } return; }
+    if (n) { onSelect(n.id); if (tool === 'select' || tool.startsWith('add')) { drag.current = { id: n.id, moved: false }; ref.current.setPointerCapture(e.pointerId); } return; }
+    if (tool.startsWith('add')) {
+      const role = tool.slice(4);
+      const nn = s.addNode(role, clamp(p.x, 20, W - 20), clamp(p.y, 20, H - 20));
+      s.log('info', `${nn.name} (${role}) placed at (${(nn.x / 10).toFixed(1)} m, ${(nn.y / 10).toFixed(1)} m)`, [nn.id]);
+      onSelect(nn.id); onEdit(); return;
+    }
+    onSelect(null);
+  };
+  const move = (e) => {
+    const d = drag.current; if (!d) return;
+    const p = toWorld(e), s = simRef.current, n = s.byId.get(d.id); if (!n) return;
+    n.x = clamp(p.x, 20, W - 20); n.y = clamp(p.y, 20, H - 20); d.moved = true; s.recompute();
+  };
+  const up = () => { if (drag.current && drag.current.moved) onEdit(); drag.current = null; };
+  return html`<canvas ref=${ref} class="field" onPointerDown=${down} onPointerMove=${move} onPointerUp=${up} onPointerCancel=${up}
+    aria-label="Sensor field. Click to place motes, drag to move them."></canvas>`;
+}
+
+// ---------- radio timeline ----------
+const TL_CODE_TOK = [null, 'listen', 'rx', 'pre', 'data', 'ack', 'beacon', 'bad'];
+const TL_CODE_H = [0, 0.32, 0.62, 1, 1, 1, 1, 0.62];
+function Timeline({ simRef, winRef, selRef }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const cv = ref.current, ctx = cv.getContext('2d');
+    let raf, tk = readTokens(), frame = 0;
+    const draw = () => {
+      raf = requestAnimationFrame(draw);
+      if (++frame % 30 === 0) tk = readTokens();
+      const s = simRef.current, win = winRef.current;
+      const order = { receiver: 0, sender: 1, idle: 2 };
+      const rows = s.nodes.slice().sort((a, b) => order[a.role] - order[b.role] || a.name.localeCompare(b.name, undefined, { numeric: true }));
+      const rowH = 20, axisH = 22, labelW = 44;
+      const dpr = window.devicePixelRatio || 1, cw = cv.clientWidth, ch = Math.max(1, rows.length) * rowH + axisH;
+      if (cv.style.height !== ch + 'px') cv.style.height = ch + 'px';
+      if (cv.width !== Math.round(cw * dpr) || cv.height !== Math.round(ch * dpr)) { cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr); }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = tk.panel; ctx.fillRect(0, 0, cw, ch);
+      const pw = cw - labelW - 8, px = pw / win, t = s.t, t0 = t - win;
+      rows.forEach((n, i) => {
+        const y = i * rowH;
+        if (n.id === selRef.current) { ctx.fillStyle = tk.grid; ctx.fillRect(0, y, cw, rowH); }
+        ctx.fillStyle = tk.ink; ctx.font = '600 11.5px "Barlow Semi Condensed", sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+        ctx.fillText(n.name, 6, y + rowH / 2);
+        const mid = y + rowH / 2;
+        ctx.fillStyle = tk.line; ctx.fillRect(labelW, mid - 0.5, pw, 1);
+        let runStart = -1, runCode = 0;
+        const flush = (endTick) => {
+          if (runCode > 0) {
+            const hh = TL_CODE_H[runCode] * (rowH - 6);
+            ctx.fillStyle = tk[TL_CODE_TOK[runCode]];
+            ctx.fillRect(labelW + (runStart - t0) * px, mid - hh / 2, Math.max(1, (endTick - runStart) * px), hh);
+          }
+        };
+        for (let k = Math.max(0, t0, t - HIST + 1); k < t; k++) {
+          const c = n.hist[k % HIST];
+          if (c !== runCode) { flush(k); runStart = k; runCode = c; }
+        }
+        flush(t);
+      });
+      // axis
+      const ay = rows.length * rowH;
+      ctx.strokeStyle = tk.line; ctx.beginPath(); ctx.moveTo(labelW, ay + 0.5); ctx.lineTo(labelW + pw, ay + 0.5); ctx.stroke();
+      const step = win <= 250 ? 25 : win <= 500 ? 50 : 100;
+      ctx.fillStyle = tk.muted; ctx.font = '400 10px "JetBrains Mono", monospace'; ctx.textBaseline = 'top';
+      for (let m = 0; m <= win; m += step) {
+        const x = labelW + pw - m * px;
+        if (m === win) continue;
+        ctx.fillRect(x, ay, 1, 4);
+        ctx.textAlign = m === 0 ? 'right' : 'center';
+        ctx.fillText(m === 0 ? 'now' : `−${m}`, x, ay + 6);
+      }
+    };
+    raf = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  return html`<canvas ref=${ref} class="timeline" aria-label="Radio state per mote over the last moments of simulated time"></canvas>`;
+}
+
+// ---------- small pieces ----------
+function Seg({ value, options, onChange, label }) {
+  return html`<div class="seg" role="group" aria-label=${label}>${options.map((o) => html`
+    <button key=${o.v} type="button" class=${value === o.v ? 'on' : ''} aria-pressed=${value === o.v} onClick=${() => onChange(o.v)} title=${o.title || ''}>${o.l}</button>`)}</div>`;
+}
+function Slider({ id, label, value, min, max, step, unit, onChange, hint }) {
+  return html`<label class="slider" for=${id}>
+    <span class="sl-top"><span>${label}</span><b class="num">${value}${unit}</b></span>
+    <input id=${id} type="range" min=${min} max=${max} step=${step} value=${value} onInput=${(e) => onChange(+e.target.value)} />
+    ${hint && html`<span class="hint">${hint}</span>`}
+  </label>`;
+}
+
+function Inspector({ sim, id, onSelect, onEdit }) {
+  const n = sim.byId.get(id);
+  if (!n) return null;
+  const on = n.E.tx + n.E.rx + n.E.idle, tt = Math.max(1, sim.t);
+  const recv = sim.nodes.filter((m) => m.role === 'receiver');
+  const tgt = n.target != null ? sim.byId.get(n.target) : null;
+  return html`<section class="card insp" aria-label="Selected mote">
+    <div class="card-h"><h2>${n.name}</h2><span class="tag">${n.mode} · ${n.st}</span>
+      <button type="button" class="ghost sm" onClick=${() => onSelect(null)} aria-label="Close inspector">Close</button></div>
+    <div class="insp-grid">
+      <label for="insp-role">Role</label>
+      <select id="insp-role" value=${n.role} onChange=${(e) => { sim.setRole(n, e.target.value); onEdit(); }}>
+        <option value="sender">Sender</option><option value="receiver">Receiver (sink)</option><option value="idle">Idle neighbour</option>
+      </select>
+      ${n.role === 'sender' && html`<label for="insp-tgt">Sends to</label>
+        <select id="insp-tgt" value=${n.pref == null ? '' : String(n.pref)} onChange=${(e) => { n.pref = e.target.value === '' ? null : +e.target.value; sim.recompute(); onEdit(); }}>
+          <option value="">Nearest receiver${tgt && n.pref == null ? ` (${tgt.name})` : ''}</option>
+          ${recv.map((r) => html`<option key=${r.id} value=${String(r.id)}>${r.name}${n.nb.has(r.id) ? '' : ' — out of range'}</option>`)}
+        </select>`}
+      <span class="k">Position</span><span class="num">${(n.x / 10).toFixed(1)} m, ${(n.y / 10).toFixed(1)} m · ${n.nb.size} neighbours</span>
+    </div>
+    <dl class="mini">
+      <div><dt>Radio on</dt><dd class="num">${pct(on / tt)}</dd></div>
+      <div><dt>Energy</dt><dd class="num">${nodeEnergy(n).toFixed(1)} mJ</dd></div>
+      <div><dt>Overheard</dt><dd class="num">${n.W.overhear} ms</dd></div>
+      <div><dt>Over-emitted</dt><dd class="num">${n.W.overemit} ms</dd></div>
+      <div><dt>Idle listening</dt><dd class="num">${n.W.idle} ms</dd></div>
+      <div><dt>TX lost to collisions</dt><dd class="num">${n.W.collision} ms</dd></div>
+      ${n.role === 'sender' ? html`
+        <div><dt>Generated / delivered</dt><dd class="num">${n.S.gen} / ${n.S.delivered}</dd></div>
+        <div><dt>Queue · dropped</dt><dd class="num">${n.queue.length} · ${n.S.dropped}</dd></div>` : html`
+        <div><dt>Frames received</dt><dd class="num">${n.S.rxOk}</dd></div>`}
+    </dl>
+    <div class="row-btns">
+      ${n.role === 'sender' && html`<button type="button" onClick=${() => sim.enqueue(n, sim.t)}>Queue a packet now</button>`}
+      <button type="button" class="ghost danger" onClick=${() => { sim.removeNode(n.id); onSelect(null); onEdit(); }}>Delete mote</button>
+    </div>
+  </section>`;
+}
+
+function runCompare(topo, cfg, seed) {
+  return PROTO_ORDER.map((k) => {
+    const s = new Sim(k, topo, cfg, seed); s.headless = true;
+    for (let i = 0; i < 60000; i++) s.tick();
+    return { key: k, name: PROTOS[k].name, ...s.summary() };
+  });
+}
+function Compare({ rows, busy, onRun, nodes }) {
+  const cols = [
+    { k: 'pdr', l: 'PDR', f: (v) => pct(v), best: 'max' },
+    { k: 'latency', l: 'Mean latency', f: (v) => v.toFixed(0) + ' ms', best: 'min' },
+    { k: 'duty', l: 'Radio duty cycle', f: (v) => pct(v), best: 'min' },
+    { k: 'energyPerPkt', l: 'Energy / delivered pkt', f: (v) => v.toFixed(2) + ' mJ', best: 'min' },
+    { k: 'hidden', l: 'Hidden-terminal losses', f: (v) => v, best: 'min' },
+    { k: 'collisions', l: 'All frames lost', f: (v) => v, best: 'min' },
+    { k: 'exposed', l: 'Exposed deferrals', f: (v) => v, best: 'min' },
+    { k: 'overhearMs', l: 'Overhearing', f: (v) => (v / 1000).toFixed(2) + ' s', best: 'min' },
+    { k: 'overemitMs', l: 'Over-emitting', f: (v) => (v / 1000).toFixed(2) + ' s', best: 'min' },
+    { k: 'idleMs', l: 'Idle listening', f: (v) => (v / 1000).toFixed(2) + ' s', best: 'min' },
+  ];
+  const best = {};
+  if (rows) for (const c of cols) { const vals = rows.map((r) => r[c.k]); best[c.k] = c.best === 'max' ? Math.max(...vals) : Math.min(...vals); }
+  return html`<section class="card compare" aria-label="Protocol comparison">
+    <div class="card-h"><h2>Compare all five</h2>
+      <button type="button" class="primary" onClick=${onRun} disabled=${busy || nodes === 0}>${busy ? 'Running…' : rows ? 'Run again' : 'Run 60 s comparison'}</button></div>
+    <p class="note">Runs each MAC headless for 60 s of simulated time on the current topology, traffic and parameters, with the same random seed. Totals are summed over all motes; best value per column is marked.</p>
+    ${rows && html`<div class="tbl-wrap"><table>
+      <thead><tr><th scope="col">MAC</th>${cols.map((c) => html`<th key=${c.k} scope="col">${c.l}</th>`)}</tr></thead>
+      <tbody>${rows.map((r) => html`<tr key=${r.key}><th scope="row">${r.name}</th>${cols.map((c) => html`<td key=${c.k} class=${'num' + (r[c.k] === best[c.k] ? ' best' : '')}>${c.f(r[c.k])}</td>`)}</tr>`)}</tbody>
+    </table></div>`}
+  </section>`;
+}
+
+// ---------- app ----------
+const DEFAULT_CFG = { Tw: 100, range: 210, interval: 1200, sync: false, maxRetries: 3, phaseLock: true };
+const SEED = 20261006;
+
+function App() {
+  const [proto, setProto] = useState('bmac');
+  const [running, setRunning] = useState(true);
+  const [speed, setSpeed] = useState(0.1);
+  const [tool, setTool] = useState('select');
+  const [sel, setSel] = useState(null);
+  const [cfg, setCfg] = useState({ ...DEFAULT_CFG });
+  const [preset, setPreset] = useState('mixed');
+  const [showRanges, setShowRanges] = useState(false);
+  const [pauseOn, setPauseOn] = useState('none');
+  const [filters, setFilters] = useState(() => new Set(CATS.map((c) => c.key)));
+  const [tlWin, setTlWin] = useState(400);
+  const [cmp, setCmp] = useState(null);
+  const [cmpBusy, setCmpBusy] = useState(false);
+  const [, setUi] = useState(0);
+
+  const simRef = useRef(null);
+  if (!simRef.current) simRef.current = new Sim('bmac', PRESETS.mixed.nodes, DEFAULT_CFG, SEED);
+  const runningRef = useRef(running), speedRef = useRef(speed), toolRef = useRef(tool), selRef = useRef(sel);
+  const hlRef = useRef(null), showRangesRef = useRef(showRanges), winRef = useRef(tlWin), pauseRef = useRef(pauseOn);
+  runningRef.current = running; speedRef.current = speed; toolRef.current = tool; selRef.current = sel;
+  showRangesRef.current = showRanges; winRef.current = tlWin; pauseRef.current = pauseOn;
+
+  const attach = (s) => {
+    s.onLog = (e) => {
+      const p = pauseRef.current;
+      if (p !== 'none' && (e.cat === p || (p === 'collision' && e.cat === 'hidden'))) {
+        runningRef.current = false; setRunning(false);
+        hlRef.current = { ids: e.ids, wall: performance.now() + 60000 };
+      }
+    };
+  };
+  if (!simRef.current.onLog) attach(simRef.current);
+
+  const rebuild = (protoKey, topo, c) => {
+    const s = new Sim(protoKey, topo, c, SEED); attach(s);
+    s.log('info', `${PROTOS[protoKey].name} started on ${topo.length} motes · check interval ${c.Tw} ms · range ${(c.range / 10).toFixed(1)} m`, []);
+    simRef.current = s; setUi((v) => v + 1);
+  };
+  useEffect(() => { simRef.current.log('info', `B-MAC started on ${simRef.current.nodes.length} motes · check interval ${cfg.Tw} ms · range ${(cfg.range / 10).toFixed(1)} m`, []); }, []);
+
+  useEffect(() => {
+    let raf, last = performance.now(), acc = 0, lastUi = 0;
+    const loop = (now) => {
+      const dt = Math.min(100, now - last); last = now;
+      if (runningRef.current) {
+        acc += dt * speedRef.current;
+        let k = Math.min(Math.floor(acc), 6000); acc -= Math.floor(acc);
+        const s = simRef.current;
+        while (k-- > 0 && runningRef.current) s.tick();
+      }
+      if (now - lastUi > 150) { lastUi = now; setUi((v) => v + 1); }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const sim = simRef.current;
+  const switchProto = (k) => { setProto(k); setCmp(null); rebuild(k, sim.snapshot(), cfg); };
+  const reset = () => rebuild(proto, sim.snapshot(), cfg);
+  const loadPreset = (k) => {
+    const p = PRESETS[k]; const c = { ...cfg, sync: p.sync, range: 210 };
+    setPreset(k); setCfg(c); setSel(null); setCmp(null); rebuild(proto, p.nodes, c);
+  };
+  const clearAll = () => { setSel(null); setCmp(null); setPreset(''); rebuild(proto, [], cfg); };
+  const updCfg = (patch) => {
+    const c = { ...cfg, ...patch }; setCfg(c);
+    const s = simRef.current; s.cfg = { ...c };
+    if ('range' in patch) s.recompute();
+    if (patch.sync) s.syncNext = s.t + 50;
+    setCmp(null);
+  };
+  const step = (k) => { runningRef.current = false; setRunning(false); for (let i = 0; i < k; i++) sim.tick(); setUi((v) => v + 1); };
+  const onEdit = () => { setCmp(null); setUi((v) => v + 1); };
+  const runCmp = () => {
+    setCmpBusy(true);
+    setTimeout(() => { const rows = runCompare(sim.snapshot(), cfg, SEED); setCmp(rows); setCmpBusy(false); }, 30);
+  };
+  const toggleFilter = (k) => { const f = new Set(filters); f.has(k) ? f.delete(k) : f.add(k); setFilters(f); };
+  const soloFilter = (k) => setFilters(filters.size === 1 && filters.has(k) ? new Set(CATS.map((c) => c.key)) : new Set([k]));
+
+  const m = sim.summary();
+  const catCount = {}; for (const e of sim.logs) catCount[e.cat] = (catCount[e.cat] || 0) + 1;
+  const shown = [];
+  for (let i = sim.logs.length - 1; i >= 0 && shown.length < 160; i--) if (filters.has(sim.logs[i].cat)) shown.push(sim.logs[i]);
+  const info = PROTO_INFO[proto];
+  const counters = [
+    { cat: 'deliver', l: 'Delivered', v: `${m.delivered} / ${m.gen}`, s: m.gen ? pct(m.pdr) + ' PDR' : '—' },
+    { cat: 'hidden', l: 'Hidden-terminal losses', v: m.hidden, s: 'frames' },
+    { cat: 'collision', l: 'Other collisions', v: m.collisions - m.hidden, s: 'frames' },
+    { cat: 'exposed', l: 'Exposed deferrals', v: m.exposed, s: 'CCA backoffs' },
+    { cat: 'overhear', l: 'Overhearing', v: m.overhearMs + ' ms', s: m.overhear + ' frames' },
+    { cat: 'overemit', l: 'Over-emitting', v: m.overemitMs + ' ms', s: 'TX to a sleeping or busy node' },
+    { cat: 'idle', l: 'Idle listening', v: m.idleMs + ' ms', s: 'radio on, channel empty' },
+    { cat: null, l: 'Radio duty cycle', v: pct(m.duty), s: m.energy.toFixed(0) + ' mJ total' },
+  ];
+
+  return html`
+  <div class="app">
+    <header class="top">
+      <div class="brand">
+        <h1>Duty-Cycle MAC Bench</h1>
+        <p class="sub">IEEE 802.15.4 · 250 kbps · 1 tick = 1 ms · CC2420 current model</p>
+      </div>
+      <nav class="protos" aria-label="MAC protocol">
+        ${PROTO_ORDER.map((k) => html`<button key=${k} type="button" class=${proto === k ? 'on' : ''} aria-pressed=${proto === k} onClick=${() => switchProto(k)}>${PROTOS[k].name}</button>`)}
+      </nav>
+    </header>
+
+    <div class="transport">
+      <button type="button" class="primary play" onClick=${() => setRunning(!running)} aria-label=${running ? 'Pause' : 'Run'}>${running ? 'Pause' : 'Run'}</button>
+      <button type="button" onClick=${() => step(1)} title="Advance 1 ms">+1 ms</button>
+      <button type="button" onClick=${() => step(10)} title="Advance 10 ms">+10 ms</button>
+      <button type="button" onClick=${reset} title="Restart this MAC on the same layout">Reset</button>
+      <button type="button" onClick=${() => sim.burst()} title="Every sender queues one packet now">Burst: all senders</button>
+      <label class="inline" for="speed">Speed
+        <select id="speed" value=${String(speed)} onChange=${(e) => setSpeed(+e.target.value)}>
+          ${SPEEDS.map((s) => html`<option key=${s.v} value=${String(s.v)}>${s.l}</option>`)}
+        </select></label>
+      <label class="inline" for="pauseon">Pause on
+        <select id="pauseon" value=${pauseOn} onChange=${(e) => setPauseOn(e.target.value)}>
+          <option value="none">nothing</option><option value="hidden">hidden terminal</option><option value="collision">any collision</option>
+          <option value="exposed">exposed terminal</option><option value="overhear">overhearing</option><option value="overemit">over-emitting</option>
+        </select></label>
+      <span class="clock num" aria-live="off">t = ${fmtT(sim.t)}</span>
+    </div>
+
+    <main class="layout">
+      <section class="bench">
+        <div class="fieldbar">
+          <${Seg} label="Field tool" value=${tool} onChange=${setTool} options=${[
+            { v: 'select', l: 'Move', title: 'Select and drag motes' }, { v: 'add-sender', l: '+ Sender' },
+            { v: 'add-receiver', l: '+ Receiver' }, { v: 'add-idle', l: '+ Idle' }, { v: 'delete', l: 'Delete' }]} />
+          <label class="inline" for="preset">Layout
+            <select id="preset" value=${preset} onChange=${(e) => e.target.value && loadPreset(e.target.value)}>
+              ${preset === '' && html`<option value="">Custom</option>`}
+              ${Object.entries(PRESETS).map(([k, p]) => html`<option key=${k} value=${k}>${p.label}</option>`)}
+            </select></label>
+          <button type="button" class="ghost sm" onClick=${clearAll}>Clear field</button>
+          <label class="check" for="ranges"><input id="ranges" type="checkbox" checked=${showRanges} onChange=${(e) => setShowRanges(e.target.checked)} /> Show all ranges</label>
+        </div>
+        <div class=${'field-wrap tool-' + tool}>
+          <${FieldCanvas} simRef=${simRef} toolRef=${toolRef} selRef=${selRef} hlRef=${hlRef} showRangesRef=${showRangesRef} onSelect=${setSel} onEdit=${onEdit} />
+          ${sim.nodes.length === 0 && html`<p class="empty">Pick <b>+ Sender</b> or <b>+ Receiver</b> and click the field to place motes.</p>`}
+        </div>
+        <p class="legend-field"><span class="sh sq"></span>receiver <span class="sh ci"></span>sender <span class="sh id"></span>idle neighbour
+          <span class="sep"></span><span class="ring r-sleep"></span>asleep <span class="ring r-listen"></span>listening <span class="ring r-rx"></span>receiving <span class="ring r-bad"></span>corrupted
+          <span class="sep"></span>orange badge = queued packets</p>
+
+        <section class="card tl">
+          <div class="card-h"><h2>Radio timeline</h2><span class="tag">ms before now</span>
+            <${Seg} label="Timeline window" value=${tlWin} onChange=${setTlWin} options=${[{ v: 200, l: '200 ms' }, { v: 400, l: '400 ms' }, { v: 1000, l: '1 s' }]} /></div>
+          <${Timeline} simRef=${simRef} winRef=${winRef} selRef=${selRef} />
+          <p class="legend">
+            <span><i style=${{background: 'var(--listen)', height: '4px'}}></i>listening</span>
+            <span><i style=${{background: 'var(--rx)', height: '7px'}}></i>receiving</span>
+            <span><i style=${{background: 'var(--bad)', height: '7px'}}></i>receiving, corrupted</span>
+            <span><i style=${{background: 'var(--pre)'}}></i>preamble / strobe</span>
+            <span><i style=${{background: 'var(--data)'}}></i>DATA</span>
+            <span><i style=${{background: 'var(--ack)'}}></i>ACK / early ACK / auto-ACK</span>
+            <span><i style=${{background: 'var(--beacon)'}}></i>beacon / probe</span>
+          </p>
+        </section>
+
+        <${Compare} rows=${cmp} busy=${cmpBusy} onRun=${runCmp} nodes=${sim.nodes.length} />
+
+        <details class="card model">
+          <summary>Model assumptions</summary>
+          <ul>
+            <li>Unit-disk radio: a frame is heard within the range circle and nowhere else; carrier-sense range equals communication range. No capture effect, so any overlap during a frame’s synchronised part corrupts it.</li>
+            <li>Slots of 1 ms. DATA 4 ms (≈128 B at 250 kbps); ACK, strobe, early ACK, beacon, probe and auto-ACK 1 ms. CCA samples the channel at the start of a slot, so two nodes that start in the same slot cannot see each other.</li>
+            <li>B-MAC preambles last one check interval plus 3 ms; a node that wakes mid-preamble locks on and waits for the data. Other frames must be heard from their first slot.</li>
+            <li>No clock drift, so ContikiMAC phase-lock stays valid until an attempt fails. Retry limit and queue depth (4) apply to all MACs.</li>
+            <li>Energy uses CC2420 datasheet currents at 3 V: 17.4 mA TX, 18.8 mA RX/listen, 20 µA asleep. Field scale: 100 px = 10 m.</li>
+          </ul>
+        </details>
+      </section>
+
+      <aside class="rack">
+        <section class="card proto">
+          <div class="card-h"><h2>${PROTOS[proto].name}</h2><span class="ref">${info.ref}</span></div>
+          <p>${info.how}</p>
+          <h3>What to watch</h3>
+          <ul>${info.watch.map((w, i) => html`<li key=${i}>${w}</li>`)}</ul>
+        </section>
+
+        <section class="card counters" aria-label="Phenomena counters">
+          ${counters.map((c) => html`<button key=${c.l} type="button" class=${'ctr' + (c.cat && filters.size === 1 && filters.has(c.cat) ? ' on' : '')}
+              style=${{ '--c': `var(--${c.cat ? CAT[c.cat].color : 'ink'})` }} disabled=${!c.cat}
+              title=${c.cat ? CAT[c.cat].def + ' Click to show only these log entries.' : ''} onClick=${() => c.cat && soloFilter(c.cat)}>
+            <span class="ctr-l">${c.l}</span><span class="ctr-v num">${c.v}</span><span class="ctr-s">${c.s}</span></button>`)}
+        </section>
+
+        ${sel != null && html`<${Inspector} sim=${sim} id=${sel} onSelect=${setSel} onEdit=${onEdit} />`}
+
+        <section class="card log" aria-label="Event log">
+          <div class="card-h"><h2>Event log</h2><span class="tag num">${sim.logs.length} events</span>
+            <button type="button" class="ghost sm" onClick=${() => { sim.logs = []; setUi((v) => v + 1); }}>Clear</button></div>
+          <div class="chips">${CATS.map((c) => html`<button key=${c.key} type="button" class=${'chip' + (filters.has(c.key) ? ' on' : '')}
+              style=${{ '--c': `var(--${c.color})` }} aria-pressed=${filters.has(c.key)} title=${c.def} onClick=${() => toggleFilter(c.key)}>
+              ${c.label} <span class="num">${catCount[c.key] || 0}</span></button>`)}</div>
+          <ol class="entries">
+            ${shown.length === 0 && html`<li class="none">No events yet for the selected categories. Press Run, or use “Burst: all senders”.</li>`}
+            ${shown.map((e) => html`<li key=${e.id} style=${{ '--c': `var(--${CAT[e.cat].color})` }}>
+              <button type="button" onClick=${() => { hlRef.current = { ids: e.ids, wall: performance.now() }; }} title="Highlight these motes on the field">
+                <span class="when num">${fmtT(e.t)}</span><span class="cat">${CAT[e.cat].label}</span><span class="msg">${e.msg}</span>
+              </button></li>`)}
+          </ol>
+        </section>
+
+        <details class="card params" open>
+          <summary>Parameters</summary>
+          <div class="params-body">
+            <${Slider} id="p-tw" label="Wake / check interval" value=${cfg.Tw} min=${50} max=${500} step=${10} unit=" ms" onChange=${(v) => updCfg({ Tw: v })}
+              hint=${proto === 'rimac' ? 'RI-MAC randomises each interval between 0.5× and 1.5×.' : proto === 'amac' ? 'A-MAC randomises each interval between 0.75× and 1.25×.' : 'Longer intervals save idle listening but lengthen preambles and strobe trains.'} />
+            <${Slider} id="p-range" label="Radio range" value=${(cfg.range / 10).toFixed(1)} min=${12} max=${32} step=${0.5} unit=" m" onChange=${(v) => updCfg({ range: Math.round(v * 10) })}
+              hint="Changing range changes who is hidden from or exposed to whom." />
+            <${Slider} id="p-int" label="Mean packet interval per sender" value=${cfg.interval} min=${300} max=${5000} step=${100} unit=" ms" onChange=${(v) => updCfg({ interval: v })} />
+            <${Slider} id="p-retry" label="Retry limit" value=${cfg.maxRetries} min=${0} max=${6} step=${1} unit="" onChange=${(v) => updCfg({ maxRetries: v })} />
+            <label class="check" for="p-sync"><input id="p-sync" type="checkbox" checked=${cfg.sync} onChange=${(e) => updCfg({ sync: e.target.checked })} />
+              Synchronised traffic: all senders generate at the same instant (forces contention)</label>
+            ${proto === 'contiki' && html`<label class="check" for="p-pl"><input id="p-pl" type="checkbox" checked=${cfg.phaseLock} onChange=${(e) => updCfg({ phaseLock: e.target.checked })} />
+              ContikiMAC phase-lock</label>`}
+          </div>
+        </details>
+      </aside>
+    </main>
+  </div>`;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(html`<${App} />`);
+</script>
+
+</body></html>
