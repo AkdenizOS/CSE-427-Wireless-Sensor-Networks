@@ -103,4 +103,4 @@ shared plan — which is the point.
 
 | Term | Instructor | Schedule | Midterm | Final | Notes |
 |------|-----------|----------|---------|-------|-------|
-| Fall 2026-2027 | Manolya Atalay | Mon theory · Thu practice | TBD | TBD | Efe — in every week file |
+| Fall 2026-2027 | Manolya Atalay | Mon theory · Thu practice | 4 Nov 2026 · [study guide](https://manolya.github.io/WSNMidtermStudyGuide/) | TBD | Efe — in every week file |
